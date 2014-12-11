@@ -35,8 +35,6 @@ public class FXMLCreatePackageController implements Initializable {
     @FXML
     private TextField nameInputField;
     @FXML
-    private TextField sizeInputField;
-    @FXML
     private TextField massInputField;
     @FXML
     private Button infoButton;
@@ -52,11 +50,16 @@ public class FXMLCreatePackageController implements Initializable {
     private CheckBox breakableBox;
     @FXML
     private Button createPackageButton;
+    @FXML
+    private TextField lengthInputField;
+    @FXML
+    private TextField widthInputField;
+    @FXML
+    private TextField heightInputField;
     
     Storage storage = Storage.getInstance();
     SmartPostList smartpostlist = SmartPostList.getInstance();
-    
-    
+
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -65,11 +68,14 @@ public class FXMLCreatePackageController implements Initializable {
         secondClassBox.setToggleGroup(group);
         thirdClassBox.setToggleGroup(group);
         firstClassBox.setSelected(true);
-        for (int i = 0;i<smartpostlist.getSize();i++){
-            startBox.getItems().add(smartpostlist.getSmartPost(i));
-            destinationBox.getItems().add(smartpostlist.getSmartPost(i));
+        for (int i = 0;i<smartpostlist.drawnPostOffices.size();i++){
+            startBox.getItems().add(smartpostlist.drawnPostOffices.get(i));
+            destinationBox.getItems().add(smartpostlist.drawnPostOffices.get(i));
         }
-
+        
+        itemBox.setValue(null);
+        startBox.setValue(null);
+        destinationBox.setValue(null);
     }    
 
     @FXML
@@ -90,27 +96,48 @@ public class FXMLCreatePackageController implements Initializable {
     private void createPackageAction(ActionEvent event) {
         Item item;
         Package pack;
-        String name = nameInputField.getText();
-        float mass = Float.parseFloat(massInputField.getText());
-        boolean breakable = breakableBox.isSelected();
+        float mass;
+        String name;
+        boolean breakable;
+        try{
+            //tää pitää sisentää
+            
+            
+        if (itemBox.valueProperty().getValue() == null){
+            
+            if (nameInputField.getText().length()<2 | massInputField.getText().length()<1 |
+                    widthInputField.getText().length()<1 | lengthInputField.getText().length()<1
+                    | heightInputField.getText().length() <1)
+                throw new InputException();
+            
+            name = nameInputField.getText();
+            mass = Float.parseFloat(massInputField.getText());
+            breakable = breakableBox.isSelected();
+            
+            float[] size = new float[3];
+            size[0] = Float.parseFloat(widthInputField.getText());
+            size[1] = Float.parseFloat(lengthInputField.getText());
+            size[2] = Float.parseFloat(heightInputField.getText());
+            Arrays.sort(size);
+
+            item = new Item(size[0], size[1], size[2], mass, name, breakable);
+            
+        }else {
+            item = itemBox.valueProperty().getValue();
+        }
+       
         
-        float[] size = new float[3];
-        String[] temp = sizeInputField.getText().split("\\*");
-        size[0] = Float.parseFloat(temp[0]);
-        size[1] = Float.parseFloat(temp[1]);
-        size[2] = Float.parseFloat(temp[2]);
-        Arrays.sort(size);
         
         float coordinates[] = new float[4];
+        if (startBox.valueProperty().getValue() == null | destinationBox.valueProperty().getValue() == null)
+            throw new EmptyComboBoxException();
+        if (startBox.valueProperty().getValue() == destinationBox.valueProperty().getValue())
+            throw new InvalidLocationException();
+        
         coordinates[0] = startBox.valueProperty().getValue().lat;
         coordinates[1] = startBox.valueProperty().getValue().lng;
         coordinates[2] = destinationBox.valueProperty().getValue().lat;
         coordinates[3] = destinationBox.valueProperty().getValue().lng;
-        
-        // miten selvitän että onko comboboxissa valittuna mitään
-        
-        item = new Item(size[0], size[1], size[2], mass, name, breakable);
-        
 
         
         if (firstClassBox.isSelected()){
@@ -128,6 +155,16 @@ public class FXMLCreatePackageController implements Initializable {
         
         Stage stage = (Stage) createPackageButton.getScene().getWindow();
         stage.close();
+        }
+        catch(EmptyComboBoxException ex){
+            System.out.println("Valitse lähtöpaikka ja kohde");
+        }
+        catch(NumberFormatException | InputException ie){
+            System.out.println("Virheellinen syöte.");
+        }
+        catch(InvalidLocationException ile){
+            System.out.println("lähtö ja saapumispaikka on sama.");
+        }
         
     }
 
@@ -137,5 +174,8 @@ public class FXMLCreatePackageController implements Initializable {
         stage.close();
     }
 
+    //testaa että voiko pakettia tehdä
+
+    
 
 }

@@ -10,6 +10,7 @@ import java.util.ArrayList;
  */
 public class SmartPostList {
     ArrayList<SmartPost> PostOffices = new ArrayList();
+    ArrayList<SmartPost> drawnPostOffices = new ArrayList();
     static private SmartPostList spl = null;
     
     private SmartPostList(){}
@@ -20,15 +21,13 @@ public class SmartPostList {
         return spl;
     }
     
-    public void addSmartPost(SmartPost sp){
-        PostOffices.add(sp);
-    }
-        
-    public SmartPost getSmartPost(int i){
-        return (PostOffices.get(i));
+    
+    public ArrayList<SmartPost> SmartPosts (){
+        return PostOffices;
     }
     
-    public int getSize(){
-        return PostOffices.size();
+    public ArrayList<SmartPost> DrawnSmartPosts(){
+        return drawnPostOffices;
     }
+    
 }

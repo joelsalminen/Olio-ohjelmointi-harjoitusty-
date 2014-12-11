@@ -12,7 +12,7 @@ public class Item {
     double mass;
     Boolean canBreak;
     
-    public Item(double s1, double s2, double s3, double m, String n, boolean b){
+    public Item(float s1, float s2, float s3, float m, String n, boolean b){
         
         size[0] = s1;
         size[1] = s2;
@@ -25,21 +25,28 @@ public class Item {
 
     
 }
-/*
+
 class Ass extends Item{
-    Ass(double s1, double s2, double s3, double m, String n, boolean b){
+    Ass(float s1, float s2, float s3, float m, String n, boolean b){
         super(s1,s2,s3,m,n,b);
     }
 }
 
 class Butt extends Item{
-    Butt(double s1, double s2, double s3, double m, String n, boolean b){
+    Butt(float s1, float s2, float s3, float m, String n, boolean b){
         super(s1,s2,s3,m,n,b);
     }
 }
 
 class Nerd extends Item{
-    Nerd(double s1, double s2, double s3, double m, String n, boolean b){
+    Nerd(float s1, float s2, float s3, float m, String n, boolean b){
         super(s1,s2,s3,m,n,b);
     }
-}*/
+}
+
+class Glass extends Item{
+
+    Glass (float s1, float s2, float s3, float m, String n, boolean b){
+        super(s1,s2,s3,m,n,b);
+    }
+}

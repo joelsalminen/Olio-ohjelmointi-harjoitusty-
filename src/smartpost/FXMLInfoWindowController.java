@@ -15,6 +15,7 @@ import javafx.stage.Stage;
  *
  * @author Joel Salminen 0401495
  */
+
 public class FXMLInfoWindowController implements Initializable {
     @FXML
     private Label firstClassLabel;
@@ -31,7 +32,7 @@ public class FXMLInfoWindowController implements Initializable {
         firstClassLabel.setText("ekan luokan paketit on hassuja, koko x*x*x");
         secondClassLabel.setText("nii on tokanki  luokan, koko x*x*x");
         thirdClassLabel.setText("kolmansia voi vaan paiskoa, koko x*x*x");
-    }    
+    }
 
     @FXML
     private void closeAction(ActionEvent event) {

@@ -6,6 +6,7 @@ package smartpost;
  * @author Joel Salminen 0401495
  */
 public class FirstClassPackage extends Package{
+    int packageClass = 1;
     double size[] = new double[3];
     
     public FirstClassPackage(float c1, float c2, float c3, float c4, Item it){
@@ -13,6 +14,7 @@ public class FirstClassPackage extends Package{
         size[0] = 30;
         size[1] = 40;
         size[2] = 50;
+        
     }
     
 

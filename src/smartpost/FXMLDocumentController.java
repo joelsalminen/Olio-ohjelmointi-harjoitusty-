@@ -61,8 +61,8 @@ public class FXMLDocumentController implements Initializable {
                 content += line + "\n";
             }
             xmlparser = new XMLParser(content);
-            for (int i = 0; i<smartpostlist.getSize();i++){
-                automatonBox.getItems().add(smartpostlist.getSmartPost(i));
+            for (int i = 0; i<smartpostlist.PostOffices.size();i++){
+                automatonBox.getItems().add(smartpostlist.PostOffices.get(i));
             }
             
             
@@ -70,7 +70,8 @@ public class FXMLDocumentController implements Initializable {
             for (int i = 0;i<storage.getSize();i++){
                 packageBox.getItems().add(storage.getPackage(i));
             }
-            
+            automatonBox.setValue(null);
+            packageBox.setValue(null);
             
         } catch (MalformedURLException ex) {
             System.err.println("error");
@@ -99,23 +100,31 @@ public class FXMLDocumentController implements Initializable {
 
     @FXML
     private void addToMapAction(ActionEvent event) {
-        SmartPost smartpost = automatonBox.valueProperty().getValue();
-        webWindow.getEngine().executeScript("document.goToLocation('"+ smartpost.address +", "+ smartpost.code
-                + " " + smartpost.city + "', '"+ smartpost.name +" "+smartpost.availability +  "', 'blue')");
+        if (automatonBox.valueProperty().getValue() != null){
+            SmartPost smartpost = automatonBox.valueProperty().getValue();
+            webWindow.getEngine().executeScript("document.goToLocation('"+ smartpost.address +", "+ smartpost.code
+                    + " " + smartpost.city + "', '"+ smartpost.name +" "+smartpost.availability +  "', 'pink')");
+            
+            if (smartpostlist.drawnPostOffices.contains(smartpost)== false){
+                smartpostlist.drawnPostOffices.add(smartpost);
+            }
+            
+        }
+        else
+            System.out.println("asdasd");
     }
 
     @FXML
     private void sendAction(ActionEvent event) {
-        float []coordinates = new float[4];
-        coordinates = packageBox.valueProperty().getValue().coordinates;
-        ArrayList <Float> al = new ArrayList();
-        al.add(coordinates[0]);
-        al.add(coordinates[1]);
-        al.add(coordinates[2]);
-        al.add(coordinates[3]);
-        
-        webWindow.getEngine().executeScript("document.createPath("+al+", 'red', 1)");
-        
+        if (packageBox.valueProperty().getValue() != null){
+            float []coordinates = packageBox.valueProperty().getValue().coordinates;
+            ArrayList <Float> al = new ArrayList();
+            al.add(coordinates[0]);
+            al.add(coordinates[1]);
+            al.add(coordinates[2]);
+            al.add(coordinates[3]);
+            webWindow.getEngine().executeScript("document.createPath("+al+", 'red', 2)");
+        }
     }
 
     @FXML

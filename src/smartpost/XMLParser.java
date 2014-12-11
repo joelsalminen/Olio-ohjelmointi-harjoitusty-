@@ -57,7 +57,7 @@ public class XMLParser {
             address = getValue("address", e);
             lat = getValue("lat", e);
             lng = getValue("lng", e);
-            smartpostlist.addSmartPost(new SmartPost(name, city, availability, code, address, lat, lng));
+            smartpostlist.PostOffices.add(new SmartPost(name, city, availability, code, address, lat, lng));
         }
     }
     
