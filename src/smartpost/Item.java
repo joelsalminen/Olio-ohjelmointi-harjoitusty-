@@ -13,19 +13,19 @@ public class Item {
     Boolean canBreak;
     
     public Item(double s1, double s2, double s3, double m, String n, boolean b){
+        
         size[0] = s1;
-        size[2] = s2;
-        size[3] = s3;
+        size[1] = s2;
+        size[2] = s3;
         mass = m;
         name = n;
         canBreak = b;
-        
-        
     }
     
 
     
 }
+/*
 class Ass extends Item{
     Ass(double s1, double s2, double s3, double m, String n, boolean b){
         super(s1,s2,s3,m,n,b);
@@ -42,4 +42,4 @@ class Nerd extends Item{
     Nerd(double s1, double s2, double s3, double m, String n, boolean b){
         super(s1,s2,s3,m,n,b);
     }
-}
+}*/

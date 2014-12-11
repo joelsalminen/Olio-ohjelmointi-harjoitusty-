@@ -20,12 +20,12 @@
       <ComboBox fx:id="itemBox" layoutX="25.0" layoutY="50.0" prefHeight="25.0" prefWidth="280.0" />
       <ComboBox fx:id="startBox" layoutX="25.0" layoutY="370.0" prefHeight="25.0" prefWidth="280.0" promptText="Lähtöautomaatti" />
       <ComboBox fx:id="destinationBox" layoutX="356.0" layoutY="370.0" prefHeight="25.0" prefWidth="280.0" promptText="Kohdeautomaatti" />
-      <TextField fx:id="nameInputField" layoutX="25.0" layoutY="160.0" prefHeight="25.0" prefWidth="280.0" promptText="Nimi" />
-      <TextField fx:id="sizeInputField" layoutX="25.0" layoutY="200.0" prefHeight="25.0" prefWidth="280.0" promptText="Koko     cm*cm*cm" />
-      <TextField fx:id="massInputField" layoutX="25.0" layoutY="240.0" prefHeight="25.0" prefWidth="280.0" promptText="Massa     kg" />
+      <TextField fx:id="nameInputField" layoutX="25.0" layoutY="160.0" prefHeight="25.0" prefWidth="280.0" promptText="Nimi" text="asd" />
+      <TextField fx:id="sizeInputField" layoutX="25.0" layoutY="200.0" prefHeight="25.0" prefWidth="280.0" promptText="Koko     cm*cm*cm" text="5*6*7" />
+      <TextField fx:id="massInputField" layoutX="25.0" layoutY="240.0" prefHeight="25.0" prefWidth="280.0" promptText="Massa     kg" text="50" />
       <Button fx:id="infoButton" layoutX="482.0" layoutY="285.0" mnemonicParsing="false" onAction="#infoAction" text="Infoa luokista" />
       <Button fx:id="createPackageButton" layoutX="518.0" layoutY="442.0" mnemonicParsing="false" onAction="#createPackageAction" prefHeight="25.0" prefWidth="119.0" text="Luo paketti" />
-      <Button fx:id="cancelButton" layoutX="415.0" layoutY="442.0" mnemonicParsing="false" onAction="#cancelAction" prefHeight="25.0" prefWidth="81.0" text="Peruuta" />
+      <Button fx:id="closeButton" layoutX="415.0" layoutY="442.0" mnemonicParsing="false" onAction="#closeAction" prefHeight="25.0" prefWidth="81.0" text="Peruuta" />
       <RadioButton fx:id="firstClassBox" layoutX="369.0" layoutY="160.0" mnemonicParsing="false" text="1. luokka" />
       <RadioButton fx:id="secondClassBox" layoutX="367.0" layoutY="200.0" mnemonicParsing="false" text="2. luokka" />
       <RadioButton fx:id="thirdClassBox" layoutX="367.0" layoutY="240.0" mnemonicParsing="false" text="3. luokka" />

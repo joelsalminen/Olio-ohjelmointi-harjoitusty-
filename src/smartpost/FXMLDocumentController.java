@@ -6,9 +6,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -27,8 +26,6 @@ import javafx.stage.Stage;
 
 public class FXMLDocumentController implements Initializable {
     @FXML
-    private Button sendAction;
-    @FXML
     private Button createPackageButton;
     @FXML
     private Button deleteButton;
@@ -38,9 +35,18 @@ public class FXMLDocumentController implements Initializable {
     private ComboBox<SmartPost> automatonBox;
     @FXML
     private WebView webWindow;
+    @FXML
+    private Button sendButton;
+    @FXML
+    private ComboBox<Package> packageBox;
+    @FXML
+    private Button refreshPackagesButton;
+    
     URL url;
     SmartPostList smartpostlist;
     XMLParser xmlparser;
+    Storage storage = Storage.getInstance();
+
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -60,6 +66,10 @@ public class FXMLDocumentController implements Initializable {
             }
             
             
+            
+            for (int i = 0;i<storage.getSize();i++){
+                packageBox.getItems().add(storage.getPackage(i));
+            }
             
             
         } catch (MalformedURLException ex) {
@@ -83,8 +93,8 @@ public class FXMLDocumentController implements Initializable {
     }
 
     @FXML
-    private void deleteActioin(ActionEvent event) {
-        
+    private void deleteAction(ActionEvent event) {
+        webWindow.getEngine().executeScript("document.deletePaths()");
     }
 
     @FXML
@@ -92,6 +102,28 @@ public class FXMLDocumentController implements Initializable {
         SmartPost smartpost = automatonBox.valueProperty().getValue();
         webWindow.getEngine().executeScript("document.goToLocation('"+ smartpost.address +", "+ smartpost.code
                 + " " + smartpost.city + "', '"+ smartpost.name +" "+smartpost.availability +  "', 'blue')");
+    }
+
+    @FXML
+    private void sendAction(ActionEvent event) {
+        float []coordinates = new float[4];
+        coordinates = packageBox.valueProperty().getValue().coordinates;
+        ArrayList <Float> al = new ArrayList();
+        al.add(coordinates[0]);
+        al.add(coordinates[1]);
+        al.add(coordinates[2]);
+        al.add(coordinates[3]);
+        
+        webWindow.getEngine().executeScript("document.createPath("+al+", 'red', 1)");
+        
+    }
+
+    @FXML
+    private void refreshAction(ActionEvent event) {
+        storage = Storage.getInstance();
+        for (int i = 0; i< storage.getSize();i++){
+            packageBox.getItems().add(storage.getPackage(i));
+        }
     }
     
 }

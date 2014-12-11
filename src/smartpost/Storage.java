@@ -14,7 +14,7 @@ public class Storage {
         
     }
     
-    public Storage getInstance(){
+    static Storage getInstance(){
         if (storage == null)
             storage = new Storage();
         return storage;
@@ -24,4 +24,11 @@ public class Storage {
         packages.add(p);
     }
     
+    public Package getPackage(int i){
+        return packages.get(i);
+    }
+    
+    public int getSize(){
+        return packages.size();
+    }
 }

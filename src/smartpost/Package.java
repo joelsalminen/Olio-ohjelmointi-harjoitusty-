@@ -6,17 +6,15 @@ package smartpost;
  */
 public class Package{
     Item item;
-    String startCoordinates_lat;
-    String startCoordinates_lon;
-    String endCoordinates_lat;
-    String endCoordinates_lon;
-    
-    public Package(String c1, String c2, String c3, String c4, Item it){
+    float []coordinates = new float[4];
 
-        startCoordinates_lat = c1;
-        startCoordinates_lon = c2;
-        endCoordinates_lat = c3;
-        endCoordinates_lon = c4;
+    
+    public Package(float c1, float c2, float c3, float c4, Item it){
+
+        coordinates[0] = c1;
+        coordinates[1] = c2;
+        coordinates[2] = c3;
+        coordinates[3] = c4;
         item = it;
     }
     
