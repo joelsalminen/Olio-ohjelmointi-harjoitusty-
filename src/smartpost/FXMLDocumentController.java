@@ -16,6 +16,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 
@@ -25,6 +26,8 @@ import javafx.stage.Stage;
  */
 
 public class FXMLDocumentController implements Initializable {
+    //Main window of this program. 
+    
     @FXML
     private Button createPackageButton;
     @FXML
@@ -41,98 +44,171 @@ public class FXMLDocumentController implements Initializable {
     private ComboBox<Package> packageBox;
     @FXML
     private Button refreshPackagesButton;
-    
-    URL url;
+
+
+
     SmartPostList smartpostlist;
-    XMLParser xmlparser;
+
     Storage storage = Storage.getInstance();
+    
+    
 
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        smartpostlist = SmartPostList.getInstance();
+        //parses an XML-document, loads objects to combo boxes
+        
+        //loads the map in webWindow
         webWindow.getEngine().load(getClass().getResource("index.html").toExternalForm());
+        smartpostlist = SmartPostList.getInstance(); //list of SmartPost objects, currently empty
+        
         try {
-            url = new URL("http://smartpost.ee/fi_apt.xml");
-            BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream()));
+            URL xmlURL = new URL("http://smartpost.ee/fi_apt.xml");
+            BufferedReader br = new BufferedReader(new InputStreamReader(xmlURL.openStream()));
             String content = "";
             String line;
             while ((line = br.readLine()) != null){
                 content += line + "\n";
             }
-            xmlparser = new XMLParser(content);
-            for (int i = 0; i<smartpostlist.PostOffices.size();i++){
-                automatonBox.getItems().add(smartpostlist.PostOffices.get(i));
+            
+            //XML-documet is parsed in XMLParser object
+            XMLParser xmlparser = new XMLParser();
+            xmlparser.parse(content);
+            
+            //Parsed SmartPost objects from SmartPostList will be put in the combo box:
+            for (int i = 0; i<smartpostlist.SmartPosts().size();i++){
+                automatonBox.getItems().add(smartpostlist.SmartPosts().get(i));
+            }
+
+            //Packages from PackageList will be put in the combo box:
+            for (int i = 0;i<storage.getPackageList().size();i++){
+                packageBox.getItems().add(storage.getPackageList().get(i));
             }
             
-            
-            
-            for (int i = 0;i<storage.getSize();i++){
-                packageBox.getItems().add(storage.getPackage(i));
-            }
+            /*  sets the current value of combo boxes to null.
+                This is so that the program would not throw an error if a user tries
+                to access an object from a combo box before an object is selected*/
             automatonBox.setValue(null);
             packageBox.setValue(null);
             
-        } catch (MalformedURLException ex) {
-            System.err.println("error");
+          } catch (MalformedURLException ex) {
+            System.err.println("Virheellinen URL");
         } catch (IOException ex) {
-            System.err.println("error");
+            System.err.println("Buffered Readerin avaaminen epäonnistui");
         }
     }    
 
     @FXML
     private void createPackageAction(ActionEvent event) {
+        //opens a package creating window
+        
         try {
             Stage stage = new Stage();
-            Parent page = FXMLLoader.load(getClass().getResource("FXMLCreatePackage.fxml"));
-            Scene scene = new Scene(page);
-            stage.setScene(scene);
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("FXMLCreatePackage.fxml"));
+            Parent parent = (Parent)loader.load();
+            stage.setScene(new Scene(parent));
+            
             stage.show();
         } catch (IOException ex) {
-            System.err.println("Paketin luominen epäonnistui.");
+            System.err.println("Paketinluomisikkunan avaaminen epäonnistui.");
         }
     }
 
+
     @FXML
     private void deleteAction(ActionEvent event) {
+        //deletes all routes on the map
+        
         webWindow.getEngine().executeScript("document.deletePaths()");
     }
 
     @FXML
     private void addToMapAction(ActionEvent event) {
-        if (automatonBox.valueProperty().getValue() != null){
+        //adds markers on the map using coordinates from SmartPost objects
+        
+        
+        if (automatonBox.valueProperty().getValue() != null){ //value is null if no objects have been selected from the combo box
             SmartPost smartpost = automatonBox.valueProperty().getValue();
-            webWindow.getEngine().executeScript("document.goToLocation('"+ smartpost.address +", "+ smartpost.code
-                    + " " + smartpost.city + "', '"+ smartpost.name +" "+smartpost.availability +  "', 'pink')");
             
-            if (smartpostlist.drawnPostOffices.contains(smartpost)== false){
-                smartpostlist.drawnPostOffices.add(smartpost);
+            //adds a marker:
+            webWindow.getEngine().executeScript("document.goToLocation('"+ smartpost.getAddress() +", "+ smartpost.getCode()
+                    + " " + smartpost.getCity() + "', '"+ smartpost.getName() +" "+smartpost.getAvailability() +  "', 'pink')");
+            
+            
+            //drawn SmartPost object is added on the DrawnSmartPostList if it's not added before
+            if (smartpostlist.DrawnSmartPosts().contains(smartpost) == false){
+                smartpostlist.DrawnSmartPosts().add(smartpost);
             }
-            
         }
-        else
-            System.out.println("asdasd");
+
     }
 
     @FXML
     private void sendAction(ActionEvent event) {
-        if (packageBox.valueProperty().getValue() != null){
-            float []coordinates = packageBox.valueProperty().getValue().coordinates;
+        //sends a package, draws a route on the map
+        
+        if (packageBox.valueProperty().getValue() != null){ //value is null if no objects have been selected from the combo box
+            
+            //coordinates are added into an arraylist
             ArrayList <Float> al = new ArrayList();
-            al.add(coordinates[0]);
-            al.add(coordinates[1]);
-            al.add(coordinates[2]);
-            al.add(coordinates[3]);
-            webWindow.getEngine().executeScript("document.createPath("+al+", 'red', 2)");
+            al.add(packageBox.valueProperty().getValue().coordinates[0]);
+            al.add(packageBox.valueProperty().getValue().coordinates[1]);
+            al.add(packageBox.valueProperty().getValue().coordinates[2]);
+            al.add(packageBox.valueProperty().getValue().coordinates[3]);
+            
+            //draws a route on the map: 
+            webWindow.getEngine().executeScript("document.createPath("+al+", 'red', " + packageBox.valueProperty().getValue().packageClass +")");
+            
+            //tests if items were broken during delivery:
+            packageBox.valueProperty().getValue().breakTest();
+            if(packageBox.valueProperty().getValue().item.broken == true){
+                openErrorWindow("Tavara hajosi kuljetuksen", "aikana!");
+            }
+            
+            //removes delivered package from Storage and then reloads the packages
+            //in packageBox
+            storage.getPackageList().remove(packageBox.valueProperty().getValue());
+            packageBox.getItems().clear();
+            packageBox.setValue(null); //value is set to null to avoid NullPointerException
+            for (int i = 0; i< storage.getPackageList().size();i++){
+                packageBox.getItems().add(storage.getPackageList().get(i));
+            }
+            
+            
         }
     }
 
     @FXML
     private void refreshAction(ActionEvent event) {
+        //refreshes pakcageBox
+        
+        packageBox.getItems().clear();
         storage = Storage.getInstance();
-        for (int i = 0; i< storage.getSize();i++){
-            packageBox.getItems().add(storage.getPackage(i));
+        for (int i = 0; i< storage.getPackageList().size();i++){
+            packageBox.getItems().add(storage.getPackageList().get(i));
         }
     }
+
+    private void openErrorWindow(String errorMessage, String errorMessage2){
+        //Opens an error window which can be used to tell user about incorrect usage
+        //of this program. Error message can be changed depending on the situation.
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("ErrorWindowFXML.fxml"));
+            Stage stage = new Stage();
+            stage.setScene(new Scene((Pane)loader.load()));
+            
+            //Passes error messages to ErrorWindowFXMLController
+            //http://stackoverflow.com/questions/14187963/passing-parameters-javafx-fxml
+            ErrorWindowFXMLController controller = loader.<ErrorWindowFXMLController>getController();
+            controller.setErrorMessage(errorMessage, errorMessage2);
+            
+            stage.show();
+        } catch (IOException ex) {
+            System.out.println("Virheilmoitusikkunan avaaminen epäonnistui.");
+        }
+    }
+
+    
+    
     
 }

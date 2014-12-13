@@ -4,21 +4,28 @@ package smartpost;
 /**
  * @author Joel Salminen 0401495
  */
-public class Package{
-    Item item;
-    float []coordinates = new float[4];
-    int PackageClass;
-
+public abstract class Package{
+    //abstract class. Consists of coordinates, class, size, and an item
+    protected Item item;
+    protected float []coordinates = new float[4];
+    protected int packageClass;
+    protected float massLimit;
+    protected double size[] = new double[3];
     
-    public Package(float c1, float c2, float c3, float c4, Item it){
-
-        coordinates[0] = c1;
-        coordinates[1] = c2;
-        coordinates[2] = c3;
-        coordinates[3] = c4;
-        item = it;
+    public Package(){
     }
     
-   
+    @Override
+    public String toString(){
+        return(item.toString() + ", " + packageClass +".luokka" );
+    }
+    
+    public void breakTest(){
+        //tests if an item is going to break during delivery
+        if (packageClass == 3 & item.degradable == true){
+            item.breakItem();
+        }
+
+    }
 }
 

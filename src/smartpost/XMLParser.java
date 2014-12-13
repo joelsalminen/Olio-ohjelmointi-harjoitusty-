@@ -22,7 +22,8 @@ public class XMLParser {
     SmartPostList smartpostlist = SmartPostList.getInstance();
     
     
-    public XMLParser(String content){
+    public void parse(String content){
+        //parses XML-documents, parsed data is used to create SmartPost-objects
         try {
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             DocumentBuilder dbuilder = dbf.newDocumentBuilder();
@@ -33,10 +34,13 @@ public class XMLParser {
             System.err.println("Parsiminen epäonnistui.");
         }
     
+    
     }
-
-
+    
+    
     private void parseCurrentData(){
+        //Creates SmartPost objects which are stored in SmartPostList object for later usage
+
         String name;
         String city;
         String availability;
@@ -50,6 +54,7 @@ public class XMLParser {
             
             Node node = nodes.item(i);
             Element e = (Element)node;
+            
             name = getValue("postoffice", e);
             city = getValue("city",e);
             availability = getValue("availability", e);
@@ -57,11 +62,14 @@ public class XMLParser {
             address = getValue("address", e);
             lat = getValue("lat", e);
             lng = getValue("lng", e);
-            smartpostlist.PostOffices.add(new SmartPost(name, city, availability, code, address, lat, lng));
+            smartpostlist.SmartPosts().add(new SmartPost(name, city, availability, code, address, lat, lng));
+            
         }
+        
     }
     
     private String getValue(String tag, Element e){
+        //
         return((Element)e.getElementsByTagName(tag).item(0)).getTextContent();
     }
     

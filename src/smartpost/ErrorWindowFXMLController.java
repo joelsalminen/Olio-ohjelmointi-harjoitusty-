@@ -16,31 +16,32 @@ import javafx.stage.Stage;
  * @author Joel Salminen 0401495
  */
 
-public class FXMLInfoWindowController implements Initializable {
-    //this window gives information about the different kinds of mailing classes
+public class ErrorWindowFXMLController implements Initializable {
     
     @FXML
-    private Label firstClassLabel;
-    @FXML
-    private Label secondClassLabel;
-    @FXML
-    private Label thirdClassLabel;
+    private Label errorText;
     @FXML
     private Button closeButton;
+    @FXML
+    private Label errorText2;
+    
+    void initialize(){}
+    void setErrorMessage(String error1, String error2){
+        errorText.setText(error1);
+        errorText2.setText(error2);
+    }
 
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        firstClassLabel.setText("ekan luokan paketit on hassuja, koko x*x*x");
-        secondClassLabel.setText("nii on tokanki  luokan, koko x*x*x");
-        thirdClassLabel.setText("kolmansia voi vaan paiskoa, koko x*x*x");
-    }
+    }    
 
     @FXML
     private void closeAction(ActionEvent event) {
-        //closes the information window when closeButton is pressed.
         Stage stage = (Stage) closeButton.getScene().getWindow();
         stage.close();
     }
+    
+    
     
 }
