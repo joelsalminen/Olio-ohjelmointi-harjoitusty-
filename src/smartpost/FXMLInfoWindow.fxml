@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.media.*?>
 <?import java.lang.*?>
 <?import java.util.*?>
 <?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-
-<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8" fx:controller="smartpost.FXMLInfoWindowController">
+<AnchorPane id="AnchorPane" prefHeight="340.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="smartpost.FXMLInfoWindowController">
    <children>
-      <Label fx:id="firstClassLabel" layoutX="35.0" layoutY="35.0" prefHeight="105.0" prefWidth="262.0" />
-      <Label fx:id="secondClassLabel" layoutX="54.0" layoutY="171.0" prefHeight="135.0" prefWidth="286.0" />
-      <Label fx:id="thirdClassLabel" layoutX="66.0" layoutY="338.0" prefHeight="59.0" prefWidth="312.0" />
-      <Button fx:id="closeButton" layoutX="432.0" layoutY="188.0" mnemonicParsing="false" onAction="#closeAction" text="Ok" />
+      <Button fx:id="closeButton" layoutX="506.0" layoutY="170.0" mnemonicParsing="false" onAction="#closeAction" prefHeight="34.0" prefWidth="60.0" text="Sulje" />
+      <Label fx:id="firstClassLabel" layoutX="30.0" layoutY="40.0" prefHeight="60.0" prefWidth="450.0" text="1.luokka" />
+      <Label fx:id="secondClassLabel" layoutX="30.0" layoutY="140.0" prefHeight="60.0" prefWidth="450.0" text="2.luokka" />
+      <Label fx:id="thirdClassLabel" layoutX="30.0" layoutY="240.0" prefHeight="60.0" prefWidth="450.0" text="3.luokka" />
    </children>
 </AnchorPane>

@@ -27,6 +27,8 @@ public class ErrorWindowFXMLController implements Initializable {
     
     void initialize(){}
     void setErrorMessage(String error1, String error2){
+        //recieves custom error message from other objects
+        
         errorText.setText(error1);
         errorText2.setText(error2);
     }

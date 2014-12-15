@@ -18,8 +18,8 @@ public class Mainclass extends Application {
         Parent root = FXMLLoader.load(getClass().getResource("FXMLDocument.fxml"));
         
         Scene scene = new Scene(root);
-        
         stage.setScene(scene);
+        scene.getStylesheets().add(Mainclass.class.getResource("SmartPost.css").toExternalForm());
         stage.show();
     }
 

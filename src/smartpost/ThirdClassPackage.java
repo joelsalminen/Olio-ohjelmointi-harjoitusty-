@@ -1,23 +1,21 @@
 
 package smartpost;
 
-import java.util.Arrays;
-
 /**
  *
  * @author Joel Salminen 0401495
  */
 public class ThirdClassPackage extends Package{
-        public ThirdClassPackage(float c1, float c2, float c3, float c4, Item it) throws PackagingException{
+        public ThirdClassPackage(double c1, double c2, double c3, double c4, Item it) throws PackagingException{
         coordinates[0] = c1;
         coordinates[1] = c2;
         coordinates[2] = c3;
         coordinates[3] = c4;
         item = it;
         packageClass = 3;
-        size[0] = 100;
-        size[1] = 115;
-        size[2] = 120;
+        size[0] = 120;
+        size[1] = 120;
+        size[2] = 200;
         massLimit = 100;
         
         //checks if an item can fit into a package. Throws PackagingException if it's too small or too heavy

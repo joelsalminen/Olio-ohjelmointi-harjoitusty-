@@ -4,7 +4,6 @@ package smartpost;
 
 import java.util.ArrayList;
 
-
 /*
  * @author Joel Salminen 0401495
  */
@@ -12,10 +11,10 @@ public class SmartPostList {
     //Stores of SmartPost objects
     
     //List SmartPost objects that can be drawn on the map:
-    private ArrayList<SmartPost> PostOffices = new ArrayList();
+    private ArrayList<SmartPost> smartPosts = new ArrayList();
     
     //List of SmartPost objects that have already been drawn on the map:
-    private ArrayList<SmartPost> drawnPostOffices = new ArrayList();
+    private ArrayList<SmartPost> drawnSmartPosts = new ArrayList();
     
     static private SmartPostList spl = null;
     private SmartPostList(){}
@@ -27,13 +26,12 @@ public class SmartPostList {
         return spl;
     }
     
-    
     public ArrayList<SmartPost> SmartPosts (){
-        return PostOffices;
+        return smartPosts;
     }
     
     public ArrayList<SmartPost> DrawnSmartPosts(){
-        return drawnPostOffices;
+        return drawnSmartPosts;
     }
     
 }

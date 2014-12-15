@@ -1,6 +1,9 @@
 
 package smartpost;
 
+import static java.lang.Math.round;
+import java.util.Arrays;
+
 /**
  *
  * @author Joel Salminen 0401495
@@ -22,6 +25,7 @@ public class Item {
         size[0] = s1;
         size[1] = s2;
         size[2] = s3;
+        Arrays.sort(size);
         mass = m;
         name = n;
         degradable = b;
@@ -34,37 +38,37 @@ public class Item {
     }
     @Override
     public String toString(){
-        return(name);
+        return(name+" "+round(size[0])+"*"+round(size[1])+"*"+round(size[2]));
     }
 
 }
 
 //Different kind of items:
-class Ass extends Item{
-    Ass(){
-        super(20,30,20,5,"Ass",false);
+class DVDBox extends Item{
+    DVDBox(){
+        super(15,20,10,5,"DVD-boksi",false);
     }
 
 }
 
-class Butt extends Item{
-    Butt(){
-        super(20,30,20,5,"Butt",false);
+class Stones extends Item{
+    Stones(){
+        super(100,100,150,80,"Kivikokoelma",false);
     }
 
 }
 
-class Nerd extends Item{
-    Nerd(){
-        super(20,30,20,5,"Nerd",true);
+class Cake extends Item{
+    Cake(){
+        super(20,30,30,5,"Täytekakku",true);
     }
 
 }
 
-class Glass extends Item{
+class GlassTableWare extends Item{
 
-    Glass (){
-        super(20,30,20,5,"Glass",true);
+    GlassTableWare (){
+        super(15,20,25,8,"Lasiastiasto",true);
     }
 
 }

@@ -7,9 +7,9 @@ package smartpost;
 public abstract class Package{
     //abstract class. Consists of coordinates, class, size, and an item
     protected Item item;
-    protected float []coordinates = new float[4];
+    protected double []coordinates = new double[4];
     protected int packageClass;
-    protected float massLimit;
+    protected double massLimit;
     protected double size[] = new double[3];
     
     public Package(){
@@ -22,7 +22,7 @@ public abstract class Package{
     
     public void breakTest(){
         //tests if an item is going to break during delivery
-        if (packageClass == 3 & item.degradable == true){
+        if ((packageClass == 3|packageClass == 1) & item.degradable == true){
             item.breakItem();
         }
 

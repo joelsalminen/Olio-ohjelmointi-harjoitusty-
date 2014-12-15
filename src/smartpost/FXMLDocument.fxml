@@ -29,7 +29,7 @@
                 <RowConstraints maxHeight="50.0" minHeight="50.0" prefHeight="50.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <Label prefHeight="17.0" prefWidth="176.0" text="TIMO-järjestelmä" GridPane.columnIndex="1" />
+                  <Text fx:id="titleText" strokeType="OUTSIDE" strokeWidth="0.0" text="TIMO-järjeslemä" wrappingWidth="381.439453125" GridPane.columnIndex="1" />
                </children>
             </GridPane>
             <WebView fx:id="webWindow" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1" />
@@ -51,8 +51,8 @@
                <children>
                   <Label text="Lisää Smart Post automaatti kartalle:" GridPane.columnIndex="1" />
                   <Label text="Pakettien luonti ja lähetys:" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
-                  <ComboBox fx:id="packageBox" prefHeight="25.0" prefWidth="210.0" promptText="Pakettilista" GridPane.columnIndex="3" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
-                  <ComboBox fx:id="automatonBox" prefHeight="25.0" prefWidth="210.0" promptText="Smart Post automaatit" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
+                  <ComboBox fx:id="packageComboBox" prefHeight="25.0" prefWidth="210.0" promptText="Pakettilista" GridPane.columnIndex="3" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
+                  <ComboBox fx:id="automatonComboBox" prefHeight="25.0" prefWidth="210.0" promptText="Smart Post automaatit" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
                   <Button fx:id="addToMapButton" mnemonicParsing="false" onAction="#addToMapAction" prefHeight="25.0" prefWidth="115.0" text="Lisää kartalle" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                   <Button fx:id="createPackageButton" mnemonicParsing="false" onAction="#createPackageAction" prefHeight="25.0" prefWidth="115.0" text="Luo paketti" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
                   <Button fx:id="refreshPackagesButton" mnemonicParsing="false" onAction="#refreshAction" prefHeight="25.0" prefWidth="115.0" text="Päivitä pakettilista" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER" />

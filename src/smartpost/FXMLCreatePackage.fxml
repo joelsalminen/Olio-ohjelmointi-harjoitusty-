@@ -20,12 +20,12 @@
          <font>
             <Font name="System Bold" size="14.0" />
          </font></Label>
-      <ComboBox fx:id="itemBox" layoutX="25.0" layoutY="100.0" prefHeight="25.0" prefWidth="280.0" />
-      <ComboBox fx:id="startBox" layoutX="360.0" layoutY="276.0" prefHeight="25.0" prefWidth="280.0" promptText="Lähtöautomaatti" />
-      <ComboBox fx:id="destinationBox" layoutX="360.0" layoutY="321.0" prefHeight="25.0" prefWidth="280.0" promptText="Kohdeautomaatti" />
-      <TextField fx:id="nameInputField" layoutX="25.0" layoutY="210.0" prefHeight="25.0" prefWidth="280.0" promptText="Nimi" text="asd" />
-      <TextField fx:id="lengthInputField" layoutX="25.0" layoutY="250.0" prefHeight="25.0" prefWidth="85.0" promptText="pituus (cm)" text="5" />
-      <TextField fx:id="massInputField" layoutX="25.0" layoutY="290.0" prefHeight="25.0" prefWidth="280.0" promptText="Massa (kg)" text="50" />
+      <ComboBox fx:id="itemComboBox" layoutX="25.0" layoutY="100.0" prefHeight="25.0" prefWidth="280.0" />
+      <ComboBox fx:id="startComboBox" layoutX="360.0" layoutY="276.0" prefHeight="25.0" prefWidth="280.0" promptText="Lähtöautomaatti" />
+      <ComboBox fx:id="destinationComboBox" layoutX="360.0" layoutY="321.0" prefHeight="25.0" prefWidth="280.0" promptText="Kohdeautomaatti" />
+      <TextField fx:id="nameInputField" layoutX="25.0" layoutY="210.0" prefHeight="25.0" prefWidth="280.0" promptText="Nimi" />
+      <TextField fx:id="lengthInputField" layoutX="25.0" layoutY="250.0" prefHeight="25.0" prefWidth="85.0" promptText="pituus (cm)" />
+      <TextField fx:id="massInputField" layoutX="25.0" layoutY="290.0" prefHeight="25.0" prefWidth="280.0" promptText="Massa (kg)" />
       <Button fx:id="infoButton" layoutX="518.0" layoutY="155.0" mnemonicParsing="false" onAction="#infoAction" text="Infoa luokista" />
       <Button fx:id="createPackageButton" layoutX="518.0" layoutY="410.0" mnemonicParsing="false" onAction="#createPackageAction" prefHeight="25.0" prefWidth="119.0" text="Luo paketti" />
       <Button fx:id="closeButton" layoutX="389.0" layoutY="410.0" mnemonicParsing="false" onAction="#closeAction" prefHeight="25.0" prefWidth="81.0" text="Peruuta" />
@@ -38,7 +38,7 @@
             <Font name="System Bold" size="16.0" />
          </font>
       </Label>
-      <TextField fx:id="widthInputField" layoutX="120.0" layoutY="250.0" prefHeight="25.0" prefWidth="85.0" promptText="leveys (cm)" text="6" />
-      <TextField fx:id="heightInputField" layoutX="220.0" layoutY="250.0" prefHeight="25.0" prefWidth="85.0" promptText="korkeus (cm)" text="7" />
+      <TextField fx:id="widthInputField" layoutX="120.0" layoutY="250.0" prefHeight="25.0" prefWidth="85.0" promptText="leveys (cm)" />
+      <TextField fx:id="heightInputField" layoutX="220.0" layoutY="250.0" prefHeight="25.0" prefWidth="85.0" promptText="korkeus (cm)" />
    </children>
 </AnchorPane>

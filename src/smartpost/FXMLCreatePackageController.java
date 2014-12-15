@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -30,11 +28,11 @@ import javafx.stage.Stage;
 
 public class FXMLCreatePackageController implements Initializable {
     @FXML
-    private ComboBox<Item> itemBox;
+    private ComboBox<Item> itemComboBox;
     @FXML
-    private ComboBox<SmartPost> startBox;
+    private ComboBox<SmartPost> startComboBox;
     @FXML
-    private ComboBox<SmartPost> destinationBox;
+    private ComboBox<SmartPost> destinationComboBox;
     @FXML
     private TextField nameInputField;
     @FXML
@@ -77,24 +75,24 @@ public class FXMLCreatePackageController implements Initializable {
         
         //adds drawn markers to combo boxes
         for (int i = 0;i<smartpostlist.DrawnSmartPosts().size();i++){
-            startBox.getItems().add(smartpostlist.DrawnSmartPosts().get(i));
-            destinationBox.getItems().add(smartpostlist.DrawnSmartPosts().get(i));
+            startComboBox.getItems().add(smartpostlist.DrawnSmartPosts().get(i));
+            destinationComboBox.getItems().add(smartpostlist.DrawnSmartPosts().get(i));
         }
         
-        //adds item to itemBox
-        itemBox.getItems().add(new Ass());
-        itemBox.getItems().add(new Butt());
-        itemBox.getItems().add(new Nerd());
-        itemBox.getItems().add(new Glass());
+        //adds item to itemComboBox
+        itemComboBox.getItems().add(new DVDBox());
+        itemComboBox.getItems().add(new Stones());
+        itemComboBox.getItems().add(new Cake());
+        itemComboBox.getItems().add(new GlassTableWare());
         
         
         
-        /*  sets the current value of combo boxes to null.
+        /*  sets the initial value of combo boxes to null.
             This is so that the program would not throw an error if a user tries
             to access an object from a combo box before an object is selected*/
-        itemBox.setValue(null);
-        startBox.setValue(null);
-        destinationBox.setValue(null);
+        itemComboBox.setValue(null);
+        startComboBox.setValue(null);
+        destinationComboBox.setValue(null);
     }    
 
     @FXML
@@ -103,8 +101,10 @@ public class FXMLCreatePackageController implements Initializable {
         try {
             Stage stage = new Stage();
             FXMLLoader loader = new FXMLLoader(getClass().getResource("FXMLInfoWindow.fxml"));
-            Parent parent = (Parent)loader.load();
-            stage.setScene(new Scene(parent));
+            Scene scene = new Scene((Parent)loader.load());
+            stage.setScene(scene);
+            
+            scene.getStylesheets().add(FXMLInfoWindowController.class.getResource("SmartPost.css").toExternalForm());
             stage.show();
         } catch (IOException ex) {
             System.err.println("Paketti-infon avaaminen epäonnistui");
@@ -124,9 +124,9 @@ public class FXMLCreatePackageController implements Initializable {
         
         try{
             //creating an item:
-            //if value is null, no items are selected from itemBox and the item
+            //if value is null, no items are selected from itemComboBox and the item
             //has to be created using the information gathered from input fields
-            if (itemBox.valueProperty().getValue() == null){ 
+            if (itemComboBox.valueProperty().getValue() == null){ 
             
                 //throws InputException if input is invalid
                 if (nameInputField.getText().length()<2 | massInputField.getText().length()<1 |
@@ -150,7 +150,7 @@ public class FXMLCreatePackageController implements Initializable {
             
             }else {
                 //this value is used to create the item if an item is selected from itemBox
-                item = itemBox.valueProperty().getValue();
+                item = itemComboBox.valueProperty().getValue();
             }
 
             
@@ -159,53 +159,51 @@ public class FXMLCreatePackageController implements Initializable {
             
             //if no SmartPost objects have been selected from combo boxes,
             //throws EmptyComboBoxException:
-            if (startBox.valueProperty().getValue() == null | destinationBox.valueProperty().getValue() == null)
+            if (startComboBox.valueProperty().getValue() == null | destinationComboBox.valueProperty().getValue() == null)
                 throw new EmptyComboBoxException();
             
             //if start and destination are in the same location, throws
             // InvalidLocationException:
-            if (startBox.valueProperty().getValue() == destinationBox.valueProperty().getValue())
+            if (startComboBox.valueProperty().getValue() == destinationComboBox.valueProperty().getValue())
                 throw new InvalidLocationException();
             
-            coordinates[0] = startBox.valueProperty().getValue().getLat();
-            coordinates[1] = startBox.valueProperty().getValue().getLng();
-            coordinates[2] = destinationBox.valueProperty().getValue().getLat();
-            coordinates[3] = destinationBox.valueProperty().getValue().getLng();
+            coordinates[0] = startComboBox.valueProperty().getValue().getLat();
+            coordinates[1] = startComboBox.valueProperty().getValue().getLng();
+            coordinates[2] = destinationComboBox.valueProperty().getValue().getLat();
+            coordinates[3] = destinationComboBox.valueProperty().getValue().getLng();
 
             if (firstClassBox.isSelected()){
                 pack = new FirstClassPackage(coordinates[0], coordinates[1], coordinates[2], coordinates[3], item);
-                storage.getPackageList().add(pack);
+                storage.addPackage(pack);
             }
             else if (secondClassBox.isSelected()){
                 pack = new SecondClassPackage(coordinates[0], coordinates[1], coordinates[2], coordinates[3], item);
-                storage.getPackageList().add(pack);
+                storage.addPackage(pack);
             }
             else if (thirdClassBox.isSelected()){
                 pack = new ThirdClassPackage(coordinates[0], coordinates[1], coordinates[2], coordinates[3], item);
-                storage.getPackageList().add(pack);
+                storage.addPackage(pack);
             }
-            
+                   
             //closing the package creating window:
             Stage stage = (Stage) createPackageButton.getScene().getWindow();
             stage.close();
             
+            
         }
         
-        //In case something went wrong an error window will pop:
+        //In case something went wrong an error window will pop up:
         catch(EmptyComboBoxException ex){
             openErrorWindow("Valitse lähtö- ja saapumisautomaatti.", "");
         }
         catch(NumberFormatException | InputException ie){
-            openErrorWindow("Virheellinen syöte." ,"");
+            openErrorWindow("Tarkista syötteet tai valitse" ,"valmis esine pudotusvalikosta.");
         }
         catch(InvalidLocationException ile){
             openErrorWindow("Lähtö- ja saapumisautomaatit", "eivät saa olla samoja.");
         }
         catch(PackagingException pe){
             openErrorWindow("Tavara ei mahdu pakettiin.", "Valitse toinen lähetysluokka");
-        }
-        catch(EmptySpacePackagingException espe){
-            openErrorWindow("Paketti pääsee heilumaan", "jotain pitäis keksiä");
         }
         
     }
@@ -215,6 +213,7 @@ public class FXMLCreatePackageController implements Initializable {
         //closes the package creating window
         
         Stage stage = (Stage) closeButton.getScene().getWindow();
+        stage.setResizable(false);
         stage.close();
     }
 
@@ -225,11 +224,14 @@ public class FXMLCreatePackageController implements Initializable {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("ErrorWindowFXML.fxml"));
             Stage stage = new Stage();
-            stage.setScene(new Scene((Pane)loader.load()));
+            Scene scene = new Scene((Pane)loader.load());
+            stage.setScene(scene);
 
             ErrorWindowFXMLController controller = loader.<ErrorWindowFXMLController>getController();
             controller.setErrorMessage(errorMessage, errorMessage2);
             
+            scene.getStylesheets().add(ErrorWindowFXMLController.class.getResource("SmartPost.css").toExternalForm());
+            stage.setResizable(false);
             stage.show();
         } catch (IOException ex) {
             System.out.println("Virheilmoitusikkunan avaaminen epäonnistui.");

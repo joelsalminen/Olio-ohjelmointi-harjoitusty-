@@ -1,0 +1,74 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 15.12.2014, 19:15:03
+    Author     : Joel Salminen 0401495
+*/
+
+.root {
+     -fx-background-image: url("green.jpg");
+}
+
+.label {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+#title-text{
+   -fx-font-size: 32px;
+   -fx-font-family: "Arial Black";
+   -fx-fill: white;
+   -fx-effect: innershadow(two-pass-box, #808080,8, 0.0 , 0 , 6 );
+}
+    
+
+
+.button {
+    -fx-font-size: 12px;
+    -fx-font-family: "Arial Narrow";
+    -fx-font-weight: bold;
+    -fx-background-color: linear-gradient(#ffa500, #ffd700);
+    -fx-effect: dropshadow(three-pass-box , #000000 , 5, 0.0 , 0 , 1 );
+}
+.button:pressed {
+    -fx-background-color: linear-gradient(#ffd700, #ffff00);
+}
+
+.combo-box{
+    -fx-font-size: 12px;
+    -fx-font-family: "Arial Narrow";
+    -fx-font-weight: bold;
+//    -fx-background-color: linear-gradient(#ffa500, #ffd700);
+    -fx-effect: dropshadow( three-pass-box , #000000 , 5, 0.0 , 0 , 1 );
+}
+/*
+.combo-box .cell{
+    -fx-background-color: linear-gradient(#ffa500, #ffd700);
+
+}
+*/
+.text-field{
+    
+    //-fx-background-color: linear-gradient(#ffa500, #ffd700);
+    -fx-font-size: 12px;
+    -fx-font-family:"Arial Narrow";
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow( three-pass-box , #000000 , 5, 0.0 , 0 , 1 );
+}
+
+.check-box{
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+.radio-button{
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+    
+}
