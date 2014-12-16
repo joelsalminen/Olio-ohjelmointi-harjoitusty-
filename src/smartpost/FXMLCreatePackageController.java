@@ -85,8 +85,6 @@ public class FXMLCreatePackageController implements Initializable {
         itemComboBox.getItems().add(new Cake());
         itemComboBox.getItems().add(new GlassTableWare());
         
-        
-        
         /*  sets the initial value of combo boxes to null.
             This is so that the program would not throw an error if a user tries
             to access an object from a combo box before an object is selected*/
@@ -101,8 +99,10 @@ public class FXMLCreatePackageController implements Initializable {
         try {
             Stage stage = new Stage();
             FXMLLoader loader = new FXMLLoader(getClass().getResource("FXMLInfoWindow.fxml"));
+            
             Scene scene = new Scene((Parent)loader.load());
             stage.setScene(scene);
+            stage.setTitle("TIMO-järjestelmä");
             
             scene.getStylesheets().add(FXMLInfoWindowController.class.getResource("SmartPost.css").toExternalForm());
             stage.show();
@@ -127,13 +127,12 @@ public class FXMLCreatePackageController implements Initializable {
             //if value is null, no items are selected from itemComboBox and the item
             //has to be created using the information gathered from input fields
             if (itemComboBox.valueProperty().getValue() == null){ 
-            
+                
                 //throws InputException if input is invalid
                 if (nameInputField.getText().length()<2 | massInputField.getText().length()<1 |
                         widthInputField.getText().length()<1 | lengthInputField.getText().length()<1
                         | heightInputField.getText().length() <1)
                     throw new InputException();
-            
                 name = nameInputField.getText();
                 mass = Float.parseFloat(massInputField.getText());
                 breakable = breakableBox.isSelected();
@@ -145,17 +144,13 @@ public class FXMLCreatePackageController implements Initializable {
                 size[1] = Float.parseFloat(lengthInputField.getText());
                 size[2] = Float.parseFloat(heightInputField.getText());
                 Arrays.sort(size);
-
+                
                 item = new Item(size[0], size[1], size[2], mass, name, breakable);
             
             }else {
                 //this value is used to create the item if an item is selected from itemBox
                 item = itemComboBox.valueProperty().getValue();
             }
-
-            
-            
-            float coordinates[] = new float[4];
             
             //if no SmartPost objects have been selected from combo boxes,
             //throws EmptyComboBoxException:
@@ -167,21 +162,20 @@ public class FXMLCreatePackageController implements Initializable {
             if (startComboBox.valueProperty().getValue() == destinationComboBox.valueProperty().getValue())
                 throw new InvalidLocationException();
             
-            coordinates[0] = startComboBox.valueProperty().getValue().getLat();
-            coordinates[1] = startComboBox.valueProperty().getValue().getLng();
-            coordinates[2] = destinationComboBox.valueProperty().getValue().getLat();
-            coordinates[3] = destinationComboBox.valueProperty().getValue().getLng();
+            SmartPost startSmartPost = startComboBox.valueProperty().getValue();
+            SmartPost desdtinationSmartPost = destinationComboBox.valueProperty().getValue();
+
 
             if (firstClassBox.isSelected()){
-                pack = new FirstClassPackage(coordinates[0], coordinates[1], coordinates[2], coordinates[3], item);
+                pack = new FirstClassPackage(startSmartPost,desdtinationSmartPost, item);
                 storage.addPackage(pack);
             }
             else if (secondClassBox.isSelected()){
-                pack = new SecondClassPackage(coordinates[0], coordinates[1], coordinates[2], coordinates[3], item);
+                pack = new SecondClassPackage(startSmartPost,desdtinationSmartPost, item);
                 storage.addPackage(pack);
             }
             else if (thirdClassBox.isSelected()){
-                pack = new ThirdClassPackage(coordinates[0], coordinates[1], coordinates[2], coordinates[3], item);
+                pack = new ThirdClassPackage(startSmartPost,desdtinationSmartPost, item);
                 storage.addPackage(pack);
             }
                    
@@ -221,11 +215,11 @@ public class FXMLCreatePackageController implements Initializable {
         //of this program. Error message can be changed depending on the situation.
         
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("ErrorWindowFXML.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("FXMLErrorWindow.fxml"));
             Stage stage = new Stage();
             Scene scene = new Scene((Pane)loader.load());
             stage.setScene(scene);
-
+            stage.setTitle("TIMO-järjestelmä");
             FXMLErrorWindowController controller = loader.<FXMLErrorWindowController>getController();
             controller.setErrorMessage(errorMessage, errorMessage2);
             

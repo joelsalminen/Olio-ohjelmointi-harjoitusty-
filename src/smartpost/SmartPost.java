@@ -12,8 +12,8 @@ public class SmartPost {
     private String availability;
     private String code;
     private String address;
-    private float lat;
-    private float lng;
+    private double lat;
+    private double lng;
     
     public SmartPost(String n, String cy, String av, String cd, String add, String coord1, String coord2){
         name = n.substring(19);
@@ -21,8 +21,8 @@ public class SmartPost {
         availability = av;
         code = cd;
         address = add;
-        lat = Float.parseFloat(coord1);
-        lng = Float.parseFloat(coord2);
+        lat = Double.parseDouble(coord1);
+        lng = Double.parseDouble(coord2);
     }
     
     @Override
@@ -31,11 +31,11 @@ public class SmartPost {
     }
     
     //Getters:
-    public float getLat(){
+    public double getLat(){
         return lat;
     }
     
-    public float getLng(){
+    public double getLng(){
         return lng;
     }
     

@@ -1,42 +1,44 @@
-/*
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
-*/
+
 /* 
     Created on : 15.12.2014, 19:15:03
     Author     : Joel Salminen 0401495
 */
 
-.root {
+.root { //background image
      -fx-background-image: url("green.jpg");
 }
 
-.label {
+.label { //label font
     -fx-font-size: 13px;
     -fx-font-weight: bold;
     -fx-text-fill: white;
 }
 
-#title-text{
+#title-text{ //"TIMO-Järjestelmä"-font
    -fx-font-size: 32px;
    -fx-font-family: "Arial Black";
    -fx-fill: white;
-   -fx-effect: innershadow(two-pass-box, #808080,8, 0.0 , 0 , 6 );
+   -fx-effect: innershadow(two-pass-box, #808080,8, 0 , 0 , 6);
 }
     
+#tabTitle{ //"Lähetetyt paketit"-font
+    -fx-font-size: 24px;
+    -fx-font-family: "Arial Black";
+    -fx-fill: white;
+    -fx-effect: innershadow(three-pass-box, #708090,6, 0 ,0 ,4); 
+}
 
-
+//button  styling:
 .button {
     -fx-font-size: 12px;
     -fx-font-family: "Arial Narrow";
     -fx-font-weight: bold;
     -fx-background-color: linear-gradient(#ffa500, #ffd700);
-    -fx-effect: dropshadow(three-pass-box , #000000 , 5, 0.0 , 0 , 1 );
 }
 .button:pressed {
     -fx-background-color: linear-gradient(#ffd700, #ffff00);
 }
+
 
 .combo-box{
     -fx-font-size: 12px;
@@ -46,29 +48,83 @@ and open the template in the editor.
     -fx-effect: dropshadow( three-pass-box , #000000 , 5, 0.0 , 0 , 1 );
 }
 /*
-.combo-box .cell{
+.combo-box .cell{ //colors combo boxes yellow
     -fx-background-color: linear-gradient(#ffa500, #ffd700);
 
 }
 */
 .text-field{
     
-    //-fx-background-color: linear-gradient(#ffa500, #ffd700);
+    //-fx-background-color: linear-gradient(#ffa500, #ffd700); //colorstextFields yellow
     -fx-font-size: 12px;
     -fx-font-family:"Arial Narrow";
     -fx-font-weight: bold;
-    -fx-effect: dropshadow( three-pass-box , #000000 , 5, 0.0 , 0 , 1 );
+    -fx-effect: dropshadow( three-pass-box , #000000 , 5, 0, 0, 1);
 }
 
-.check-box{
+.check-box{ //CheckBox font
     -fx-font-size: 12px;
     -fx-font-weight: bold;
     -fx-text-fill: white;
 }
 
-.radio-button{
+.radio-button{ //radio button font
     -fx-font-size: 12px;
     -fx-font-weight: bold;
     -fx-text-fill: white;
     
+}
+
+//tab bar styling:
+
+//making the empty space of the TabPane transparent
+.tab-pane .tab-header-area .tab-header-background {
+    -fx-opacity: 0;
+}
+.tab-pane .tab:selected{ //colors the selected tab yellow
+    -fx-background-color: linear-gradient(#ffa500, #ffd700);
+}
+.tab-pane{ //sets the minimum width of tabs to 110px
+    -fx-tab-min-width: 110px;
+}
+
+.tab .tab-label { //customises the labels inside tabs
+    //-fx-text-fill: #828282;
+    -fx-font-size: 11px;
+    -fx-font-family:"Arial Narrow";
+    -fx-font-weight: bold;
+}
+
+
+/*
+.tab-pane .tab{   //changes the color of tab that is currently not selected
+    -fx-background-color: white;
+}
+*/
+
+
+.text-area .content {//changes the cursor when hovering over TextArea
+    -fx-cursor: DEFAULT;
+}
+
+
+//because TextArea consists of more than just one node, they all have to be made
+//transparent for the TextArea to be transparent:
+.text-area {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+    -fx-font-family:"Arial Narrow";
+}
+
+.text-area .scroll-pane {
+    -fx-background-color: transparent;
+}
+
+.text-area .scroll-pane .viewport{
+    -fx-background-color: transparent;
+}
+
+.text-area .scroll-pane .content{
+    -fx-background-color: transparent;
 }

@@ -19,6 +19,15 @@ public class Mainclass extends Application {
         
         Scene scene = new Scene(root);
         stage.setScene(scene);
+        
+        //sets the minimum size of this window
+        stage.setMinHeight(640);
+        stage.setMinWidth(720);
+        
+        //sets title for this window
+        stage.setTitle("TIMO-järjestelmä");
+        
+        //choosing a .css-file
         scene.getStylesheets().add(Mainclass.class.getResource("SmartPost.css").toExternalForm());
         stage.show();
     }

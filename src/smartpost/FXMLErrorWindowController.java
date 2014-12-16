@@ -21,11 +21,11 @@ public class FXMLErrorWindowController implements Initializable {
     @FXML
     private Label errorText;
     @FXML
-    private Button closeButton;
-    @FXML
     private Label errorText2;
+    @FXML
+    private Button closeButton;
     
-    void initialize(){}
+    //void initialize(){}
     void setErrorMessage(String error1, String error2){
         //recieves custom error message from other objects
         
@@ -40,10 +40,10 @@ public class FXMLErrorWindowController implements Initializable {
 
     @FXML
     private void closeAction(ActionEvent event) {
+        //closes the error window
+        
         Stage stage = (Stage) closeButton.getScene().getWindow();
         stage.close();
     }
-    
-    
     
 }

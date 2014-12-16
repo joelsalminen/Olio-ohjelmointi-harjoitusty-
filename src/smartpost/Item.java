@@ -1,7 +1,6 @@
 
 package smartpost;
 
-import static java.lang.Math.round;
 import java.util.Arrays;
 
 /**
@@ -38,7 +37,7 @@ public class Item {
     }
     @Override
     public String toString(){
-        return(name+" "+round(size[0])+"*"+round(size[1])+"*"+round(size[2]));
+        return(name);
     }
 
 }

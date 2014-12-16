@@ -6,11 +6,10 @@ package smartpost;
  * @author Joel Salminen 0401495
  */
 public class ThirdClassPackage extends Package{
-        public ThirdClassPackage(double c1, double c2, double c3, double c4, Item it) throws PackagingException{
-        coordinates[0] = c1;
-        coordinates[1] = c2;
-        coordinates[2] = c3;
-        coordinates[3] = c4;
+        public ThirdClassPackage(SmartPost sp1, SmartPost sp2, Item it) throws PackagingException{
+
+        startSmartPost = sp1;
+        destinationSmartPost = sp2;
         item = it;
         packageClass = 3;
         size[0] = 120;

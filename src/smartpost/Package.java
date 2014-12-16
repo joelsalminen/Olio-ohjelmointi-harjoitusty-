@@ -5,9 +5,10 @@ package smartpost;
  * @author Joel Salminen 0401495
  */
 public abstract class Package{
-    //abstract class. Consists of coordinates, class, size, and an item
+    //abstract class. SmartPost objects, mailing class, size, and an item
     protected Item item;
-    protected double []coordinates = new double[4];
+    protected SmartPost startSmartPost;
+    protected SmartPost destinationSmartPost;
     protected int packageClass;
     protected double massLimit;
     protected double size[] = new double[3];

@@ -12,11 +12,14 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Cursor;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.control.ScrollBar;
+import javafx.scene.control.TextArea;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 import javafx.scene.web.WebView;
@@ -50,17 +53,27 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private Text titleText;
     @FXML
-    private Button openLogButton;
+    private TextArea packageListView;
+    @FXML
+    private Text tabTitle;
 
     private SmartPostList smartpostlist;
     private Storage storage = Storage.getInstance();
-    private FXMLLogController logController = new FXMLLogController();
+
+
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         //parses an XML-document, loads objects to combo boxes
         
         titleText.setId("title-text");
+        tabTitle.setId("tabTitle");
+        
+        //textArea is now uneditable, as it's only meant for reading
+        packageListView.setEditable(false);
+        packageListView.setWrapText(true); //hides horizontal scrollbars
+
+        
         //loads the map in webWindow
         webWindow.getEngine().load(getClass().getResource("index.html").toExternalForm());
         smartpostlist = SmartPostList.getInstance(); //list of SmartPost objects, currently empty
@@ -97,7 +110,7 @@ public class FXMLDocumentController implements Initializable {
           } catch (MalformedURLException ex) {
             System.err.println("Virheellinen URL");
         } catch (IOException ex) {
-            System.err.println("Buffered Readerin avaaminen epäonnistui");
+            System.err.println("BufferedReaderin avaaminen epäonnistui");
         }
     }    
 
@@ -113,6 +126,8 @@ public class FXMLDocumentController implements Initializable {
             stage.setScene(scene);
             scene.getStylesheets().add(FXMLCreatePackageController.class.getResource("SmartPost.css").toExternalForm());
             stage.setResizable(false);
+            stage.setTitle("TIMO-järjestelmä");
+            
             stage.show();
         } catch (IOException ex) {
             System.err.println("Paketinluomisikkunan avaaminen epäonnistui.");
@@ -158,14 +173,15 @@ public class FXMLDocumentController implements Initializable {
             
             //coordinates are added into an arraylist
             ArrayList <Double> al = new ArrayList();
-            al.add(packageComboBox.valueProperty().getValue().coordinates[0]);
-            al.add(packageComboBox.valueProperty().getValue().coordinates[1]);
-            al.add(packageComboBox.valueProperty().getValue().coordinates[2]);
-            al.add(packageComboBox.valueProperty().getValue().coordinates[3]);
+            al.add(packageComboBox.valueProperty().getValue().startSmartPost.getLat());
+            al.add(packageComboBox.valueProperty().getValue().startSmartPost.getLng());
+            al.add(packageComboBox.valueProperty().getValue().destinationSmartPost.getLat());
+            al.add(packageComboBox.valueProperty().getValue().destinationSmartPost.getLng());
             
-            try {
-                //draws a route on the map: 
+            
+            //draws a route on the map: 
                 distance = (double)webWindow.getEngine().executeScript("document.createPath("+al+", 'red', " + packageComboBox.valueProperty().getValue().packageClass +")");
+            try {
                 
                 //checks if the distance between start and finish is longer than 150km
                 //when delivering first class packages
@@ -178,20 +194,32 @@ public class FXMLDocumentController implements Initializable {
                 if(packageComboBox.valueProperty().getValue().item.broken == true){
                     throw new BrokenItemException();
                 }
-            
+                //adds 
+                packageListView.setText(packageListView.getText()+"Lähetettiin "+ packageComboBox.valueProperty().getValue().item.name + " " +
+                        packageComboBox.valueProperty().getValue().packageClass + ".luokassa, " + packageComboBox.valueProperty().getValue().startSmartPost.getName() 
+                        + " -> " + packageComboBox.valueProperty().getValue().destinationSmartPost.getName() +", etäisyys " + distance +"km. Paketti saapui perille ehjänä.");
             
             }
+            //exceptions, in case something went wrong during delivery
             catch(DistanceException de){
                 openErrorWindow("Paketti jäi matkan varrelle!", "Liian pitkä välimatka 1.luokan paketeille");
                 webWindow.getEngine().executeScript("document.deletePaths()");
+                
+                packageListView.setText(packageListView.getText()+"Lähetettiin "+ packageComboBox.valueProperty().getValue().item.name + " " +
+                        packageComboBox.valueProperty().getValue().packageClass + ".luokassa, " + packageComboBox.valueProperty().getValue().startSmartPost.getName() 
+                        + " -> " + packageComboBox.valueProperty().getValue().destinationSmartPost.getName() +" Paketti ei saapunut perille.");
+                
             }
             catch(BrokenItemException bie){
                 openErrorWindow("Tavara hajosi kuljetuksen", "aikana!");
+                
                 webWindow.getEngine().executeScript("document.deletePaths()");
+                packageListView.setText(packageListView.getText()+"Lähetettiin "+ packageComboBox.valueProperty().getValue().item.name + " " +
+                        packageComboBox.valueProperty().getValue().packageClass + ".luokassa, " + packageComboBox.valueProperty().getValue().startSmartPost.getName()
+                        + " -> " + packageComboBox.valueProperty().getValue().destinationSmartPost.getName() +", etäisyys " + distance +"km. Tavara hajosi matkan aikana.");
+                
             }
-            System.out.println();
-            logController.addEvent(packageComboBox.valueProperty().getValue().toString()+ "lähetetty.");
-            
+
             //removes delivered package from Storage and then reloads the packages
             //in packageBox
             storage.removePackage(packageComboBox.valueProperty().getValue());
@@ -221,10 +249,12 @@ public class FXMLDocumentController implements Initializable {
         //Opens an error window which can be used to tell user about incorrect usage
         //of this program. Error message can be changed depending on the situation.
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("ErrorWindowFXML.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("FXMLErrorWindow.fxml"));
             Stage stage = new Stage();
             Scene scene = new Scene((Pane)loader.load());
             stage.setScene(scene);
+            stage.setResizable(false);
+            stage.setTitle("TIMO-järjestelmä");
             
             //Passes error messages to ErrorWindowFXMLController
             //http://stackoverflow.com/questions/14187963/passing-parameters-javafx-fxml
@@ -235,23 +265,6 @@ public class FXMLDocumentController implements Initializable {
             stage.show();
         } catch (IOException ex) {
             System.out.println("Virheilmoitusikkunan avaaminen epäonnistui.");
-        }
-    }
-
-    
-    @FXML
-    private void OpenLogAction(ActionEvent event) {
-        try{
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("FXMLLog.fxml"));
-            Stage stage = new Stage();
-            Scene scene = new Scene((Pane)loader.load());
-            stage.setScene(scene);
-            
-            scene.getStylesheets().add(FXMLLogController.class.getResource("SmartPost.css").toExternalForm());
-            stage.show();
-        }
-        catch(IOException ex){
-            System.out.println("Lokin avaakinen epäonnistui");
         }
     }
 
