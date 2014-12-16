@@ -27,13 +27,15 @@
                         <GridPane>
                           <columnConstraints>
                             <ColumnConstraints hgrow="SOMETIMES" maxWidth="10.0" minWidth="10.0" prefWidth="10.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="609.0" minWidth="10.0" prefWidth="606.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="355.0" minWidth="10.0" prefWidth="114.0" />
                           </columnConstraints>
                           <rowConstraints>
                             <RowConstraints maxHeight="50.0" minHeight="50.0" prefHeight="50.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
                               <Text fx:id="titleText" strokeType="OUTSIDE" strokeWidth="0.0" text="TIMO-Järjestelmä" wrappingWidth="441.13671875" GridPane.columnIndex="1" />
+                              <Label fx:id="gg" prefHeight="17.0" prefWidth="68.0" text="Label" GridPane.columnIndex="2" />
                            </children>
                         </GridPane>
                         <WebView fx:id="webWindow" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1" />
