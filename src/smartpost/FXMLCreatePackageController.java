@@ -189,7 +189,6 @@ public class FXMLCreatePackageController implements Initializable {
             Stage stage = (Stage) createPackageButton.getScene().getWindow();
             stage.close();
             
-            
         }
         
         //In case something went wrong an error window will pop up:
@@ -227,10 +226,10 @@ public class FXMLCreatePackageController implements Initializable {
             Scene scene = new Scene((Pane)loader.load());
             stage.setScene(scene);
 
-            ErrorWindowFXMLController controller = loader.<ErrorWindowFXMLController>getController();
+            FXMLErrorWindowController controller = loader.<FXMLErrorWindowController>getController();
             controller.setErrorMessage(errorMessage, errorMessage2);
             
-            scene.getStylesheets().add(ErrorWindowFXMLController.class.getResource("SmartPost.css").toExternalForm());
+            scene.getStylesheets().add(FXMLErrorWindowController.class.getResource("SmartPost.css").toExternalForm());
             stage.setResizable(false);
             stage.show();
         } catch (IOException ex) {

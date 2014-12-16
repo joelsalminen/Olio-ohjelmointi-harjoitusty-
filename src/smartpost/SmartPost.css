@@ -13,7 +13,7 @@ and open the template in the editor.
 }
 
 .label {
-    -fx-font-size: 12px;
+    -fx-font-size: 13px;
     -fx-font-weight: bold;
     -fx-text-fill: white;
 }

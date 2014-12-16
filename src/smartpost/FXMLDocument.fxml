@@ -51,13 +51,14 @@
                <children>
                   <Label text="Lisää Smart Post automaatti kartalle:" GridPane.columnIndex="1" />
                   <Label text="Pakettien luonti ja lähetys:" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
-                  <ComboBox fx:id="packageComboBox" prefHeight="25.0" prefWidth="210.0" promptText="Pakettilista" GridPane.columnIndex="3" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
-                  <ComboBox fx:id="automatonComboBox" prefHeight="25.0" prefWidth="210.0" promptText="Smart Post automaatit" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
-                  <Button fx:id="addToMapButton" mnemonicParsing="false" onAction="#addToMapAction" prefHeight="25.0" prefWidth="115.0" text="Lisää kartalle" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                  <ComboBox fx:id="packageComboBox" prefHeight="25.0" prefWidth="230.0" promptText="Pakettilista" GridPane.columnIndex="3" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
+                  <ComboBox fx:id="automatonComboBox" prefHeight="25.0" prefWidth="230.0" promptText="Smart Post automaatit" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
+                  <Button fx:id="addToMapButton" mnemonicParsing="false" onAction="#addToMapAction" prefHeight="25.0" prefWidth="130.0" text="Lisää kartalle" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                   <Button fx:id="createPackageButton" mnemonicParsing="false" onAction="#createPackageAction" prefHeight="25.0" prefWidth="115.0" text="Luo paketti" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
                   <Button fx:id="refreshPackagesButton" mnemonicParsing="false" onAction="#refreshAction" prefHeight="25.0" prefWidth="115.0" text="Päivitä pakettilista" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
                   <Button fx:id="sendButton" mnemonicParsing="false" onAction="#sendAction" prefHeight="25.0" prefWidth="130.0" text="Lähetä paketti" GridPane.columnIndex="3" GridPane.halignment="RIGHT" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
                   <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#deleteAction" prefHeight="25.0" prefWidth="130.0" text="Poista reitit kartalta" GridPane.columnIndex="3" GridPane.halignment="RIGHT" GridPane.rowIndex="3" GridPane.valignment="CENTER" />
+                  <Button fx:id="openLogButton" mnemonicParsing="false" onAction="#OpenLogAction" prefHeight="25.0" prefWidth="130.0" text="Avaa tapahtumalogi" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="3" GridPane.valignment="CENTER" />
                </children>
             </GridPane>
          </children>

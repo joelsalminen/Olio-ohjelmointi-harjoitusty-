@@ -3,7 +3,7 @@ package smartpost;
 
 /**
  *
- * @author Solid
+ * @author Joel Salminen 0401495
  */
 public class DistanceException extends Exception{
     

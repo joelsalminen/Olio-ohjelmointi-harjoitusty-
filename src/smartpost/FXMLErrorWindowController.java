@@ -16,7 +16,7 @@ import javafx.stage.Stage;
  * @author Joel Salminen 0401495
  */
 
-public class ErrorWindowFXMLController implements Initializable {
+public class FXMLErrorWindowController implements Initializable {
     
     @FXML
     private Label errorText;

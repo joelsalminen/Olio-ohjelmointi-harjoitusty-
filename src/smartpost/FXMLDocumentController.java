@@ -49,9 +49,12 @@ public class FXMLDocumentController implements Initializable {
     private Button refreshPackagesButton;
     @FXML
     private Text titleText;
+    @FXML
+    private Button openLogButton;
 
     private SmartPostList smartpostlist;
     private Storage storage = Storage.getInstance();
+    private FXMLLogController logController = new FXMLLogController();
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -98,6 +101,7 @@ public class FXMLDocumentController implements Initializable {
         }
     }    
 
+    
     @FXML
     private void createPackageAction(ActionEvent event) {
         //opens a package creating window
@@ -123,6 +127,7 @@ public class FXMLDocumentController implements Initializable {
         webWindow.getEngine().executeScript("document.deletePaths()");
     }
 
+    
     @FXML
     private void addToMapAction(ActionEvent event) {
         //adds markers on the map using coordinates from SmartPost objects
@@ -141,9 +146,9 @@ public class FXMLDocumentController implements Initializable {
                 smartpostlist.DrawnSmartPosts().add(smartpost);
             }
         }
-
     }
 
+    
     @FXML
     private void sendAction(ActionEvent event) {
         //sends a package, draws a route on the map
@@ -184,6 +189,9 @@ public class FXMLDocumentController implements Initializable {
                 openErrorWindow("Tavara hajosi kuljetuksen", "aikana!");
                 webWindow.getEngine().executeScript("document.deletePaths()");
             }
+            System.out.println();
+            logController.addEvent(packageComboBox.valueProperty().getValue().toString()+ "lähetetty.");
+            
             //removes delivered package from Storage and then reloads the packages
             //in packageBox
             storage.removePackage(packageComboBox.valueProperty().getValue());
@@ -192,9 +200,11 @@ public class FXMLDocumentController implements Initializable {
             for (int i = 0; i< storage.getSize();i++){
                 packageComboBox.getItems().add(storage.getPackage(i));
             }
+            
         }
     }
-
+    
+    
     @FXML
     private void refreshAction(ActionEvent event) {
         //refreshes pakcageComboBox
@@ -206,6 +216,7 @@ public class FXMLDocumentController implements Initializable {
         }
     }
 
+    
     private void openErrorWindow(String errorMessage, String errorMessage2){
         //Opens an error window which can be used to tell user about incorrect usage
         //of this program. Error message can be changed depending on the situation.
@@ -217,14 +228,31 @@ public class FXMLDocumentController implements Initializable {
             
             //Passes error messages to ErrorWindowFXMLController
             //http://stackoverflow.com/questions/14187963/passing-parameters-javafx-fxml
-            ErrorWindowFXMLController controller = loader.<ErrorWindowFXMLController>getController();
+            FXMLErrorWindowController controller = loader.<FXMLErrorWindowController>getController();
             controller.setErrorMessage(errorMessage, errorMessage2);
             
-            scene.getStylesheets().add(ErrorWindowFXMLController.class.getResource("SmartPost.css").toExternalForm());
+            scene.getStylesheets().add(FXMLErrorWindowController.class.getResource("SmartPost.css").toExternalForm());
             stage.show();
         } catch (IOException ex) {
             System.out.println("Virheilmoitusikkunan avaaminen epäonnistui.");
         }
     }
+
     
+    @FXML
+    private void OpenLogAction(ActionEvent event) {
+        try{
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("FXMLLog.fxml"));
+            Stage stage = new Stage();
+            Scene scene = new Scene((Pane)loader.load());
+            stage.setScene(scene);
+            
+            scene.getStylesheets().add(FXMLLogController.class.getResource("SmartPost.css").toExternalForm());
+            stage.show();
+        }
+        catch(IOException ex){
+            System.out.println("Lokin avaakinen epäonnistui");
+        }
+    }
+
 }
