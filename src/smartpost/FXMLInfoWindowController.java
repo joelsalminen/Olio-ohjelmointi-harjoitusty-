@@ -28,12 +28,10 @@ public class FXMLInfoWindowController implements Initializable {
     @FXML
     private Label thirdClassLabel;
 
-
-
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        firstClassLabel.setText("1.lähetysluokka on nopein pakettiluokka, mutta sitä ei voi lähettää \n");
-        firstClassLabel.setText(firstClassLabel.getText()+"150 kilometriä kauemmas. 1.luokassa ei kannata lähettää särkyviä esineitä.\n");
+        firstClassLabel.setText("1.lähetysluokka on nopein pakettiluokka, mutta sitä ei kannata käyttää\n");
+        firstClassLabel.setText(firstClassLabel.getText()+"yli 150km lähetyksissä tai lähetettäessä helposti särkyviä tavaroita.\n");
         firstClassLabel.setText(firstClassLabel.getText()+"TIMO ei ota vastuuta paketeista, jotka on lähetetty yli 150km päähän tällä\n");
         firstClassLabel.setText(firstClassLabel.getText()+"lähetysluokalla. Paketin maksinmikoko: 90x90x120 cm, painoraja 50kg");
         

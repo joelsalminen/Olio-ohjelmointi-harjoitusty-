@@ -33,4 +33,7 @@ public class SmartPostList {
         smartPosts.add(sp);
     }
     
+    public void removeSmartPost(SmartPost sp){
+        smartPosts.remove(sp);
+    }
 }

@@ -22,7 +22,7 @@ public class Mainclass extends Application {
         
         //sets the minimum size of this window
         stage.setMinHeight(640);
-        stage.setMinWidth(820);
+        stage.setMinWidth(880);
         
         //sets title for this window
         stage.setTitle("TIMO-järjestelmä");

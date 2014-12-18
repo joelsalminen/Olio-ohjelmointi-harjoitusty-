@@ -115,7 +115,6 @@
     -fx-cursor: DEFAULT;
 }
 
-
 //because TextArea consists of more than just one node, they all have to be made
 //transparent for the TextArea to be transparent:
 .text-area {
@@ -135,4 +134,9 @@
 
 .text-area .scroll-pane .content{
     -fx-background-color: transparent;
+}
+
+//minimum heigth for combo box down lists
+.combo-box-popup > .list-view { 
+    -fx-min-height: 150;
 }

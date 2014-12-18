@@ -37,4 +37,8 @@ public class Storage implements java.io.Serializable{
     public void addPackage(Package p){
         packages.add(p);
     }
+    
+    public void clearStorage(){
+        packages.clear();
+    }
 }

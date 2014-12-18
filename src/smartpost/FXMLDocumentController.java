@@ -1,6 +1,7 @@
 package smartpost;
 
 
+import java.awt.Insets;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -12,6 +13,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -27,7 +30,6 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.Pane;
-import javafx.scene.text.Text;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 
@@ -39,11 +41,14 @@ public class FXMLDocumentController implements Initializable {
     
     @FXML
     private WebView webWindow;
-    
     @FXML
     private ComboBox<SmartPost> automatonComboBox;
     @FXML
     private Button addMarkerButton;
+    @FXML
+    private Button saveStorageButton;
+    @FXML
+    private Button loadStorageButton;
     @FXML
     private ComboBox<Package> packageComboBox;
     @FXML
@@ -96,6 +101,7 @@ public class FXMLDocumentController implements Initializable {
     private SmartPostList smartpostlist;
     private Storage storage = Storage.getInstance();
     private ReadAndWrite raw = new ReadAndWrite();
+
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -161,10 +167,134 @@ public class FXMLDocumentController implements Initializable {
         } catch (IOException ex) {
             System.err.println("BufferedReaderin avaaminen epäonnistui");
         }
-
-
-    }    
-
+    }
+    
+    
+    @FXML
+    private void addMarkerAction(ActionEvent event) {
+        //adds markers on the map using coordinates from SmartPost objects
+        
+        if (automatonComboBox.valueProperty().getValue() != null){ //value is null if no objects have been selected from the combo box
+            SmartPost smartpost = automatonComboBox.valueProperty().getValue();
+            
+            //adding a marker:
+            webWindow.getEngine().executeScript("document.goToLocation('"+ smartpost.getAddress() +", "+ smartpost.getCode()
+                    + " " + smartpost.getCity() + "', '"+ smartpost.getName() +" "+smartpost.getAvailability() +  "', 'pink')");
+            //drawn SmartPost object is added on the start and destination
+            //ComboBoxes if it has not already been added before
+            if (startComboBox.getItems().contains(smartpost) == false){
+                startComboBox.getItems().add(smartpost);
+                destinationComboBox.getItems().add(smartpost);
+            }
+            smartpostlist.removeSmartPost(automatonComboBox.valueProperty().getValue());
+            automatonComboBox.getItems().remove(automatonComboBox.valueProperty().getValue());
+            automatonComboBox.setValue(null);
+        }
+    }
+    
+    
+    @FXML
+    private void sendAction(ActionEvent event) {
+        //sends a package, draws a route on the map and updates the delivery history
+        
+        DateFormat date = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+        Calendar cal = Calendar.getInstance();
+        
+        if (packageComboBox.valueProperty().getValue() != null){ //value is null if no objects have been selected from the combo box
+            double distance; //distance between start and destination 
+            
+            //coordinates are added into an arraylist because the script command wants
+            //the coordinates in that form
+            ArrayList <Double> al = new ArrayList();
+            al.add(packageComboBox.valueProperty().getValue().startSmartPost.getLat());
+            al.add(packageComboBox.valueProperty().getValue().startSmartPost.getLng());
+            al.add(packageComboBox.valueProperty().getValue().destinationSmartPost.getLat());
+            al.add(packageComboBox.valueProperty().getValue().destinationSmartPost.getLng());
+            
+            //draws a route on the map: 
+                distance = (double)webWindow.getEngine().executeScript("document.createPath("+al+", 'red', " 
+                        + packageComboBox.valueProperty().getValue().packageClass +")");
+                
+            try {
+                
+                //checks if the distance between start and finish is longer than 150km
+                //when delivering first class packages
+                if (packageComboBox.valueProperty().getValue().packageClass == 1 & distance >150){
+                    throw new DistanceException();
+                }
+            
+                //tests if items were broken during delivery:
+                packageComboBox.valueProperty().getValue().breakTest();
+                if(packageComboBox.valueProperty().getValue().item.broken == true){
+                    throw new BrokenItemException();
+                }
+                
+                //updates historyTextArea
+                historyTextArea.setText(historyTextArea.getText()+date.format(cal.getTime())+"   Lähetettiin "+ packageComboBox.valueProperty().getValue().item.name + " " +
+                        packageComboBox.valueProperty().getValue().packageClass + ".luokassa, " + packageComboBox.valueProperty().getValue().startSmartPost.getName() 
+                        + " -> " + packageComboBox.valueProperty().getValue().destinationSmartPost.getName() +", etäisyys " + distance +"km. Paketti saapui perille ehjänä.\n");
+            
+            }
+            //exceptions, in case something went wrong during delivery
+            catch(DistanceException de){
+                openMessageWindow("Paketti jäi matkan varrelle!", "Liian pitkä välimatka 1.luokan paketeille");
+                webWindow.getEngine().executeScript("document.deletePaths()");
+                
+                historyTextArea.setText(historyTextArea.getText()+date.format(cal.getTime())+"   Lähetettiin "+ packageComboBox.valueProperty().getValue().item.name + " " +
+                        packageComboBox.valueProperty().getValue().packageClass + ".luokassa, " + packageComboBox.valueProperty().getValue().startSmartPost.getName() 
+                        + " -> " + packageComboBox.valueProperty().getValue().destinationSmartPost.getName() +" Paketti ei saapunut perille.\n");
+                
+            }
+            catch(BrokenItemException bie){
+                openMessageWindow("Tavara hajosi kuljetuksen", "aikana!");
+                
+                webWindow.getEngine().executeScript("document.deletePaths()");
+                historyTextArea.setText(historyTextArea.getText()+date.format(cal.getTime())+"   Lähetettiin "+ packageComboBox.valueProperty().getValue().item.name + " " +
+                        packageComboBox.valueProperty().getValue().packageClass + ".luokassa, " + packageComboBox.valueProperty().getValue().startSmartPost.getName()
+                        + " -> " + packageComboBox.valueProperty().getValue().destinationSmartPost.getName() +", etäisyys " + distance +"km. Tavara hajosi matkan aikana.\n");
+                
+            }
+            //amountOfPackages counter and historyLog.txt are updated
+            amountOfPackages.setText(Integer.toString(Integer.parseInt(amountOfPackages.getText())-1));
+            raw.saveHistory(historyTextArea.getText());
+            
+            //removes delivered package from Storage and then refreshes the packageBox
+            storage.removePackage(packageComboBox.valueProperty().getValue());
+            packageComboBox.getItems().clear();
+            packageComboBox.setValue(null); //value is set to null to avoid NullPointerException
+            for (int i = 0; i< storage.getSize();i++){
+                packageComboBox.getItems().add(storage.getPackage(i));
+            }
+        }
+    }
+    
+    
+    @FXML
+    private void deleteAction(ActionEvent event) {
+        //deletes all routes on the map
+        
+        webWindow.getEngine().executeScript("document.deletePaths()");
+    }
+    
+    
+    @FXML
+    private void infoAction(ActionEvent event) {
+        //opens an info box which contains information about mailing classes
+        try {
+            Stage stage = new Stage();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("FXMLInfoWindow.fxml"));
+            
+            Scene scene = new Scene((Parent)loader.load());
+            stage.setScene(scene);
+            stage.setTitle("TIMO-järjestelmä");
+            stage.setResizable(false);
+            scene.getStylesheets().add(FXMLInfoWindowController.class.getResource("SmartPost.css").toExternalForm());
+            stage.show();
+        } catch (IOException ex) {
+            System.err.println("Paketti-infon avaaminen epäonnistui");
+        }
+    }
+    
     
     @FXML
     private void createPackageAction(ActionEvent event) {
@@ -230,7 +360,9 @@ public class FXMLDocumentController implements Initializable {
             
             //new package is added to Storage and packageComboBox only if no error are thrown
             storage.addPackage(pack);
-            packageComboBox.getItems().add(pack);
+            packageComboBox.getItems().clear();
+            for (int i=0;i<storage.getSize();i++)
+                packageComboBox.getItems().add(storage.getPackage(i));
             resetPackageTab();
             
             //updates the amoutOfPackages counter
@@ -253,112 +385,42 @@ public class FXMLDocumentController implements Initializable {
             }
     }
 
-
-    @FXML
-    private void deleteAction(ActionEvent event) {
-        //deletes all routes on the map
-        
-        webWindow.getEngine().executeScript("document.deletePaths()");
-    }
-
     
     @FXML
-    private void addMarkerAction(ActionEvent event) {
-        //adds markers on the map using coordinates from SmartPost objects
-        
-        if (automatonComboBox.valueProperty().getValue() != null){ //value is null if no objects have been selected from the combo box
-            SmartPost smartpost = automatonComboBox.valueProperty().getValue();
-            
-            //adding a marker:
-            webWindow.getEngine().executeScript("document.goToLocation('"+ smartpost.getAddress() +", "+ smartpost.getCode()
-                    + " " + smartpost.getCity() + "', '"+ smartpost.getName() +" "+smartpost.getAvailability() +  "', 'pink')");
-            
-            //drawn SmartPost object is added on the start and destination
-            //ComboBoxes if it has not already been added before
-            if (startComboBox.getItems().contains(smartpost) == false){
-                startComboBox.getItems().add(smartpost);
-                destinationComboBox.getItems().add(smartpost);
-            }
-        }
+    private void cancelAction(ActionEvent event) {
+        //resets the package creation tab
+        resetPackageTab();
     }
 
+
+    private void resetPackageTab(){
+        //is used when either a new package is created or when
+        //cancelButton is pressed
+        itemComboBox.valueProperty().setValue(null);
+        startComboBox.valueProperty().setValue(null);
+        destinationComboBox.valueProperty().setValue(null);
+        firstClassBox.setSelected(true);
+        breakableBox.setSelected(false);
+        nameInputField.setText("");
+        lengthInputField.setText("");
+        widthInputField.setText("");
+        heightInputField.setText("");
+        massInputField.setText("");
+    }
+    
     
     @FXML
-    private void sendAction(ActionEvent event) {
-        //sends a package, draws a route on the map and updates the delivery history
+    private void resetTextAreaAction(ActionEvent event) {
         
-        DateFormat date = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-        Calendar cal = Calendar.getInstance();
-        
-        if (packageComboBox.valueProperty().getValue() != null){ //value is null if no objects have been selected from the combo box
-            double distance; //distance between start and destination 
-            
-            //coordinates are added into an arraylist because the script command wants
-            //the coordinates in that form
-            ArrayList <Double> al = new ArrayList();
-            al.add(packageComboBox.valueProperty().getValue().startSmartPost.getLat());
-            al.add(packageComboBox.valueProperty().getValue().startSmartPost.getLng());
-            al.add(packageComboBox.valueProperty().getValue().destinationSmartPost.getLat());
-            al.add(packageComboBox.valueProperty().getValue().destinationSmartPost.getLng());
-            
-            //draws a route on the map: 
-                distance = (double)webWindow.getEngine().executeScript("document.createPath("+al+", 'red', " + packageComboBox.valueProperty().getValue().packageClass +")");
-            try {
-                
-                //checks if the distance between start and finish is longer than 150km
-                //when delivering first class packages
-                if (packageComboBox.valueProperty().getValue().packageClass == 1 & distance >150){
-                    throw new DistanceException();
-                }
-            
-                //tests if items were broken during delivery:
-                packageComboBox.valueProperty().getValue().breakTest();
-                if(packageComboBox.valueProperty().getValue().item.broken == true){
-                    throw new BrokenItemException();
-                }
-                
-                //updates historyTextArea
-                historyTextArea.setText(historyTextArea.getText()+date.format(cal.getTime())+"   Lähetettiin "+ packageComboBox.valueProperty().getValue().item.name + " " +
-                        packageComboBox.valueProperty().getValue().packageClass + ".luokassa, " + packageComboBox.valueProperty().getValue().startSmartPost.getName() 
-                        + " -> " + packageComboBox.valueProperty().getValue().destinationSmartPost.getName() +", etäisyys " + distance +"km. Paketti saapui perille ehjänä.\n");
-            
-            }
-            //exceptions, in case something went wrong during delivery
-            catch(DistanceException de){
-                openMessageWindow("Paketti jäi matkan varrelle!", "Liian pitkä välimatka 1.luokan paketeille");
-                webWindow.getEngine().executeScript("document.deletePaths()");
-                
-                historyTextArea.setText(historyTextArea.getText()+date.format(cal.getTime())+"   Lähetettiin "+ packageComboBox.valueProperty().getValue().item.name + " " +
-                        packageComboBox.valueProperty().getValue().packageClass + ".luokassa, " + packageComboBox.valueProperty().getValue().startSmartPost.getName() 
-                        + " -> " + packageComboBox.valueProperty().getValue().destinationSmartPost.getName() +" Paketti ei saapunut perille.\n");
-                
-            }
-            catch(BrokenItemException bie){
-                openMessageWindow("Tavara hajosi kuljetuksen", "aikana!");
-                
-                webWindow.getEngine().executeScript("document.deletePaths()");
-                historyTextArea.setText(historyTextArea.getText()+date.format(cal.getTime())+"   Lähetettiin "+ packageComboBox.valueProperty().getValue().item.name + " " +
-                        packageComboBox.valueProperty().getValue().packageClass + ".luokassa, " + packageComboBox.valueProperty().getValue().startSmartPost.getName()
-                        + " -> " + packageComboBox.valueProperty().getValue().destinationSmartPost.getName() +", etäisyys " + distance +"km. Tavara hajosi matkan aikana.\n");
-                
-            }
-            //amountOfPackages counter and historyLog.txt are updated
-            amountOfPackages.setText(Integer.toString(Integer.parseInt(amountOfPackages.getText())-1));
-            raw.saveHistory(historyTextArea.getText());
-            
-            //removes delivered package from Storage and then refreshes the packageBox
-            storage.removePackage(packageComboBox.valueProperty().getValue());
-            packageComboBox.getItems().clear();
-            packageComboBox.setValue(null); //value is set to null to avoid NullPointerException
-            for (int i = 0; i< storage.getSize();i++){
-                packageComboBox.getItems().add(storage.getPackage(i));
-            }
-        }
+        historyTextArea.setText("");
+        raw.saveHistory("");
     }
+    
     
     private void openMessageWindow(String message, String message2){
         //Opens a message window which can be used to tell user about things like incorrect usage
         //of this program. The message shown can be changed depending on the situation.
+        
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("FXMLMessageWindow.fxml"));
             Stage stage = new Stage();
@@ -380,48 +442,68 @@ public class FXMLDocumentController implements Initializable {
     }
 
     @FXML
-    private void infoAction(ActionEvent event) {
-        //opens an info box which contains information about mailing classes
-        try {
-            Stage stage = new Stage();
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("FXMLInfoWindow.fxml"));
+    private void loadStorageAction(ActionEvent event) {
+        //loads a Storage object from a file
+        
+        try{
+            SmartPost startSmartPost;
+            SmartPost destinationSmartPost;
+            storage = raw.loadStorage();
             
-            Scene scene = new Scene((Parent)loader.load());
-            stage.setScene(scene);
-            stage.setTitle("TIMO-järjestelmä");
+            //current packageComboBox is cleared
+            //this is because if the user decides to save storage and immidiately after
+            //load it, the storage would have 2 pieces of every package.
+            packageComboBox.getItems().clear();
             
-            scene.getStylesheets().add(FXMLInfoWindowController.class.getResource("SmartPost.css").toExternalForm());
-            stage.show();
-        } catch (IOException ex) {
-            System.err.println("Paketti-infon avaaminen epäonnistui");
+            //new packages are put into the packageComboBox and SmartPost objects
+            //are added to the map:
+            for (int i = 0; i<storage.getSize();i++){
+                packageComboBox.getItems().add(storage.getPackage(i));
+                
+                startSmartPost = storage.getPackage(i).startSmartPost;
+                destinationSmartPost = storage.getPackage(i).destinationSmartPost;
+                
+                webWindow.getEngine().executeScript("document.goToLocation('"+ startSmartPost.getAddress() 
+                        +", "+ startSmartPost.getCode()+ " " + startSmartPost.getCity() + "', '"
+                        + startSmartPost.getName() +" "+startSmartPost.getAvailability() +  "', 'pink')");
+            
+                webWindow.getEngine().executeScript("document.goToLocation('"+ destinationSmartPost.getAddress()
+                        +", "+ destinationSmartPost.getCode()+ " " + destinationSmartPost.getCity() + "', '"
+                        + destinationSmartPost.getName() +" "+destinationSmartPost.getAvailability() +  "', 'pink')");
+                
+        }
+            raw.clearStorageFile();
+            openMessageWindow("Varasto ladattu.","");
+            
+            //updates the combo boxes and SmartPostList:
+            for (int i=0;i<storage.getSize();i++){
+                if(startComboBox.getItems().contains(storage.getPackage(i).startSmartPost) == false){
+                    startComboBox.getItems().add(storage.getPackage(i).startSmartPost);
+                    destinationComboBox.getItems().add(storage.getPackage(i).startSmartPost);
+                }
+                if(startComboBox.getItems().contains(storage.getPackage(i).destinationSmartPost) == false){
+                    startComboBox.getItems().add(storage.getPackage(i).destinationSmartPost);
+                    destinationComboBox.getItems().add(storage.getPackage(i).destinationSmartPost);
+                }
+            }
+            
+            
+
+    }   catch (IOException | ClassNotFoundException ex) {
+            openMessageWindow("Varaston lataaminen epäonnistui!","");
         }
     }
-
     @FXML
-    private void cancelAction(ActionEvent event) {
-        //resets the package creation tab
-        resetPackageTab();
-    }
-    
-    private void resetPackageTab(){
-        //is used when either a new package is created or when
-        //cancelButton is pressed
-        itemComboBox.valueProperty().setValue(null);
-        startComboBox.valueProperty().setValue(null);
-        destinationComboBox.valueProperty().setValue(null);
-        firstClassBox.setSelected(true);
-        breakableBox.setSelected(false);
-        nameInputField.setText("");
-        lengthInputField.setText("");
-        widthInputField.setText("");
-        heightInputField.setText("");
-        massInputField.setText("");
+    private void saveStorageAction(ActionEvent event) {
+        //writes the current storage into the file.
+        //previous file will be lost
+        try {
+            raw.saveStorage();
+            openMessageWindow("Varasto tallennettu.","");
+        } catch (IOException ex) {
+            openMessageWindow("Varaston tallentaminen ei onnistunut!","");
+        }
+        
     }
 
-    @FXML
-    private void resetTextAreaAction(ActionEvent event) {
-        historyTextArea.setText("");
-        raw.saveHistory("");
-    }
-    
 }
