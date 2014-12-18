@@ -13,36 +13,31 @@ import javafx.stage.Stage;
 /**
  * FXML Controller class
  *
- * @author Joel Salminen 0401495
+ * @author Solid
  */
+public class FXMLMessageWindowController implements Initializable {
 
-public class FXMLErrorWindowController implements Initializable {
-    
-    @FXML
-    private Label errorText;
-    @FXML
-    private Label errorText2;
     @FXML
     private Button closeButton;
+    @FXML
+    private Label messageText;
+    @FXML
+    private Label messageText2;
     
-    //void initialize(){}
-    void setErrorMessage(String error1, String error2){
-        //recieves custom error message from other objects
+    void setMessage(String message1, String message2){
+        //receives custom message from other objects
         
-        errorText.setText(error1);
-        errorText2.setText(error2);
+        messageText.setText(message1);
+        messageText2.setText(message2);
     }
-
-
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        
     }    
 
     @FXML
     private void closeAction(ActionEvent event) {
-        //closes the error window
-        
-        Stage stage = (Stage) closeButton.getScene().getWindow();
+        Stage stage = (Stage)closeButton.getScene().getWindow();
         stage.close();
     }
     

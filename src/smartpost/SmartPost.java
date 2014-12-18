@@ -6,7 +6,8 @@ package smartpost;
  * @author Joel Salminen 0401495
  */
 
-public class SmartPost {
+public class SmartPost implements java.io.Serializable{
+    //SmartPost objects are created from parsed XML-data
     private String name;
     private String city;
     private String availability;
@@ -26,6 +27,7 @@ public class SmartPost {
     }
     
     @Override
+    //changes the name of SmartPost objects when displayed in a ComboBox
     public String toString(){
         return(city + " " + address);
     }

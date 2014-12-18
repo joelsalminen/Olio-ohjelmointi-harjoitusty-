@@ -19,7 +19,6 @@ import javafx.stage.Stage;
 public class FXMLInfoWindowController implements Initializable {
     //this window gives information about the different kinds of mailing classes
     
-
     @FXML
     private Button closeButton;
     @FXML
@@ -45,7 +44,6 @@ public class FXMLInfoWindowController implements Initializable {
         thirdClassLabel.setText("3.lähetysluokassa kannattaa lähettää suurikokoisia ja painavia\n");
         thirdClassLabel.setText(thirdClassLabel.getText() + "paketteja, jotka eivät mene helposti rikki. \n");
         thirdClassLabel.setText(thirdClassLabel.getText() + "Paketin maksimikoko: 120x120x200 cm, painoraja 100kg");
-        
     }
 
     @FXML
@@ -54,5 +52,4 @@ public class FXMLInfoWindowController implements Initializable {
         Stage stage = (Stage) closeButton.getScene().getWindow();
         stage.close();
     }
-    
 }

@@ -5,7 +5,7 @@ package smartpost;
  *
  * @author Joel Salminen 0401495
  */
-public class FirstClassPackage extends Package{
+public class FirstClassPackage extends Package implements java.io.Serializable{ 
     
     public FirstClassPackage(SmartPost sp1, SmartPost sp2, Item it) throws PackagingException{
         
@@ -23,8 +23,5 @@ public class FirstClassPackage extends Package{
             throw new PackagingException();
             
         }
-        
     }
-    
-
 }

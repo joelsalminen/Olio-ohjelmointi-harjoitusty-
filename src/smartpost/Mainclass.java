@@ -22,7 +22,7 @@ public class Mainclass extends Application {
         
         //sets the minimum size of this window
         stage.setMinHeight(640);
-        stage.setMinWidth(720);
+        stage.setMinWidth(820);
         
         //sets title for this window
         stage.setTitle("TIMO-järjestelmä");
@@ -31,7 +31,6 @@ public class Mainclass extends Application {
         scene.getStylesheets().add(Mainclass.class.getResource("SmartPost.css").toExternalForm());
         stage.show();
     }
-
 
     public static void main(String[] args) {
         launch(args);

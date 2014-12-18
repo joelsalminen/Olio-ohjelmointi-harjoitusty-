@@ -17,9 +17,9 @@ import org.xml.sax.SAXException;
  * @author Joel Salminen 0401495
  */
 
-public class XMLParser {
+public class DataBuilder {
     private Document doc;
-    SmartPostList smartpostlist = SmartPostList.getInstance();
+    private SmartPostList smartpostlist = SmartPostList.getInstance();
     
     
     public void parse(String content){
@@ -28,7 +28,7 @@ public class XMLParser {
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             DocumentBuilder dbuilder = dbf.newDocumentBuilder();
             doc = dbuilder.parse(new InputSource(new StringReader(content)));
-            doc.getDocumentElement().normalize();;
+            doc.getDocumentElement().normalize();
             parseCurrentData();
         } catch (ParserConfigurationException | SAXException | IOException ex) {
             System.err.println("Parsiminen epäonnistui.");
@@ -62,14 +62,12 @@ public class XMLParser {
             address = getValue("address", e);
             lat = getValue("lat", e);
             lng = getValue("lng", e);
-            smartpostlist.SmartPosts().add(new SmartPost(name, city, availability, code, address, lat, lng));
-            
+            smartpostlist.addSmartPost(new SmartPost(name, city, availability, code, address, lat, lng));
         }
         
     }
     
     private String getValue(String tag, Element e){
-        //
         return((Element)e.getElementsByTagName(tag).item(0)).getTextContent();
     }
     

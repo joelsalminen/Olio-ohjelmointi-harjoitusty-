@@ -5,7 +5,7 @@ package smartpost;
  *
  * @author Joel Salminen 0401495
  */
-public class ThirdClassPackage extends Package{
+public class ThirdClassPackage extends Package implements java.io.Serializable{
         public ThirdClassPackage(SmartPost sp1, SmartPost sp2, Item it) throws PackagingException{
 
         startSmartPost = sp1;

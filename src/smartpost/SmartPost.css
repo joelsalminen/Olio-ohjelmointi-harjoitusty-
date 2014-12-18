@@ -14,19 +14,27 @@
     -fx-text-fill: white;
 }
 
-#title-text{ //"TIMO-Järjestelmä"-font
+#title-text{ //styling "TIMO-Järjestelmä"
    -fx-font-size: 32px;
    -fx-font-family: "Arial Black";
    -fx-fill: white;
    -fx-effect: innershadow(two-pass-box, #808080,8, 0 , 0 , 6);
 }
     
-#tabTitle{ //"Lähetetyt paketit"-font
-    -fx-font-size: 24px;
+#history-title{ //styling "Lähetetyt paketit" 
+    -fx-font-size: 28px;
     -fx-font-family: "Arial Black";
     -fx-fill: white;
     -fx-effect: innershadow(three-pass-box, #708090,6, 0 ,0 ,4); 
 }
+
+#package-title{
+    -fx-font-size: 30px;
+    -fx-font-family: "Arial Black";
+    -fx-fill: white;
+    -fx-effect: innershadow(three-pass-box, #708090,6, 0 ,0 ,4);
+}
+
 
 //button  styling:
 .button {
@@ -77,7 +85,7 @@
 
 //tab bar styling:
 
-//making the empty space of the TabPane transparent
+//makes the empty space of the TabPane transparent
 .tab-pane .tab-header-area .tab-header-background {
     -fx-opacity: 0;
 }

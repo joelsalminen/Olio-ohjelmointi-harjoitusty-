@@ -6,7 +6,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -15,63 +19,110 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
-
-
 
 /*
  * @author Joel Salminen 0401495
  */
 
 public class FXMLDocumentController implements Initializable {
-    //Main window of this program. 
     
     @FXML
-    private Button createPackageButton;
-    @FXML
-    private Button deleteButton;
-    @FXML
-    private Button addToMapButton;
+    private WebView webWindow;
+    
     @FXML
     private ComboBox<SmartPost> automatonComboBox;
     @FXML
-    private WebView webWindow;
-    @FXML
-    private Button sendButton;
+    private Button addMarkerButton;
     @FXML
     private ComboBox<Package> packageComboBox;
     @FXML
-    private Button refreshPackagesButton;
+    private Button sendButton;
     @FXML
-    private Text titleText;
+    private Button deleteButton;
     @FXML
-    private TextArea packageListView;
+    private ComboBox<Item> itemComboBox;
     @FXML
-    private Text tabTitle;
+    private TextField nameInputField;
+    @FXML
+    private TextField lengthInputField;
+    @FXML
+    private TextField widthInputField;
+    @FXML
+    private TextField heightInputField;
+    @FXML
+    private TextField massInputField;
+    @FXML
+    private CheckBox breakableBox;
+    @FXML
+    private RadioButton firstClassBox;
+    @FXML
+    private RadioButton secondClassBox;
+    @FXML
+    private RadioButton thirdClassBox;
+    @FXML
+    private Button infoButton;
+    @FXML
+    private ComboBox<SmartPost> startComboBox;
+    @FXML
+    private ComboBox<SmartPost> destinationComboBox;
+    @FXML
+    private Button cancelButton;
+    @FXML
+    private Button createPackageButton1;
+    @FXML
+    private TextArea historyTextArea;
+    @FXML
+    private Label amountOfPackages;
+    @FXML
+    private Button resetTextAreaButton;
+    @FXML
+    private Label titleText;
+    @FXML
+    private Label historyTitle;
+    @FXML
+    private Label createPackageTitle;
 
     private SmartPostList smartpostlist;
     private Storage storage = Storage.getInstance();
-    @FXML
-    private Label gg;
-
-
+    private ReadAndWrite raw = new ReadAndWrite();
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        //parses an XML-document, loads objects to combo boxes
         
-        titleText.setId("title-text");
-        tabTitle.setId("tabTitle");
+        historyTextArea.setText(raw.loadHistory());
         
-        //textArea is now uneditable, as it's only meant for reading
-        packageListView.setEditable(false);
-        packageListView.setWrapText(true); //hides horizontal scrollbars
+        //creates a Radio button group, sets firstClassBox on as default:
+        ToggleGroup group = new ToggleGroup();
+        firstClassBox.setToggleGroup(group);
+        secondClassBox.setToggleGroup(group);
+        thirdClassBox.setToggleGroup(group);
+        firstClassBox.setSelected(true);
+        
+        //adds items to itemComboBox
+        itemComboBox.getItems().add(new DVDBox());
+        itemComboBox.getItems().add(new Stones());
+        itemComboBox.getItems().add(new Cake());
+        itemComboBox.getItems().add(new GlassTableWare());
+        
+        //Titles need IDs in order to customise them in the css file
+        titleText.setId("title-text"); 
+        historyTitle.setId("history-title");
+        createPackageTitle.setId("package-title");
+        
+        //textArea is now uneditable because it's only meant for reading
+        historyTextArea.setEditable(false);
+        historyTextArea.setWrapText(true); //hides horizontal scrollbars
 
         
         //loads the map in webWindow
@@ -86,19 +137,14 @@ public class FXMLDocumentController implements Initializable {
             while ((line = br.readLine()) != null){
                 content += line + "\n";
             }
-            
+
             //XML-documet is parsed in XMLParser object
-            XMLParser xmlparser = new XMLParser();
-            xmlparser.parse(content);
+            DataBuilder databuilder = new DataBuilder();
+            databuilder.parse(content);
             
             //Parsed SmartPost objects from SmartPostList are be put in the combo box:
-            for (int i = 0; i<smartpostlist.SmartPosts().size();i++){
-                automatonComboBox.getItems().add(smartpostlist.SmartPosts().get(i));
-            }
-
-            //Packages from PackageList will be put in the combo box:
-            for (int i = 0;i<storage.getSize();i++){
-                packageComboBox.getItems().add(storage.getPackage(i));
+            for (int i = 0; i<smartpostlist.getSize();i++){
+                automatonComboBox.getItems().add(smartpostlist.getSmartPost(i));
             }
             
             /*  sets the current value of combo boxes to null.
@@ -106,32 +152,105 @@ public class FXMLDocumentController implements Initializable {
                 to access an object from a combo box before an object is selected*/
             automatonComboBox.setValue(null);
             packageComboBox.setValue(null);
+            itemComboBox.setValue(null);
+            startComboBox.setValue(null);
+            destinationComboBox.setValue(null);
             
-          } catch (MalformedURLException ex) {
+        } catch (MalformedURLException ex) {
             System.err.println("Virheellinen URL");
         } catch (IOException ex) {
             System.err.println("BufferedReaderin avaaminen epäonnistui");
         }
+
+
     }    
 
     
     @FXML
     private void createPackageAction(ActionEvent event) {
-        //opens a package creating window
+        //creates Package objects
         
-        try {
-            Stage stage = new Stage();
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("FXMLCreatePackage.fxml"));
-            Scene scene = new Scene((Parent)loader.load());
-            stage.setScene(scene);
-            scene.getStylesheets().add(FXMLCreatePackageController.class.getResource("SmartPost.css").toExternalForm());
-            stage.setResizable(false);
-            stage.setTitle("TIMO-järjestelmä");
+        Item item;
+        Package pack = null;
+        float mass;
+        String name;
+        boolean breakable; //defines items degradability
+        
+        try{
+            //creating an item:
+            //if value is null, no items are selected from itemComboBox and the item
+            //has to be created using the information gathered from input fields
+            if (itemComboBox.valueProperty().getValue() == null){ 
+                
+                //throws InputException if input is invalid
+                if (nameInputField.getText().length()<2 | massInputField.getText().length()<1 |
+                        widthInputField.getText().length()<1 | lengthInputField.getText().length()<1
+                        | heightInputField.getText().length() <1)
+                    throw new InputException();
+                name = nameInputField.getText();
+                mass = Float.parseFloat(massInputField.getText());
+                breakable = breakableBox.isSelected();
+                
+                //size variables are stored in an array so they can be sorted and later compared
+                //to package sizes more easily
+                float[] size = new float[3];
+                size[0] = Float.parseFloat(widthInputField.getText());
+                size[1] = Float.parseFloat(lengthInputField.getText());
+                size[2] = Float.parseFloat(heightInputField.getText());
+                Arrays.sort(size);
+                
+                item = new Item(size[0], size[1], size[2], mass, name, breakable);
+                itemComboBox.getItems().add(item);
+            }else {
+                //this value is used to create the item if an item is selected from itemBox
+                item = itemComboBox.valueProperty().getValue();
+            }
             
-            stage.show();
-        } catch (IOException ex) {
-            System.err.println("Paketinluomisikkunan avaaminen epäonnistui.");
+            //throws EmptyComboBoxException if no SmartPost objects have been selected from combo boxes:
+            if (startComboBox.valueProperty().getValue() == null | destinationComboBox.valueProperty().getValue() == null)
+                throw new EmptyComboBoxException();
+            
+            // throws InvalidLocationException if start and destination are in the same location:
+            if (startComboBox.valueProperty().getValue() == destinationComboBox.valueProperty().getValue())
+                throw new InvalidLocationException();
+            
+            SmartPost startSmartPost = startComboBox.valueProperty().getValue();
+            SmartPost destinationSmartPost = destinationComboBox.valueProperty().getValue();
+            
+            //choosing what kind of mailing class to use
+            if (firstClassBox.isSelected()){
+                pack = new FirstClassPackage(startSmartPost,destinationSmartPost, item);
+            }
+            else if (secondClassBox.isSelected()){
+                pack = new SecondClassPackage(startSmartPost,destinationSmartPost, item);
+            }
+            else if (thirdClassBox.isSelected()){
+                pack = new ThirdClassPackage(startSmartPost,destinationSmartPost, item);
+            }
+            
+            //new package is added to Storage and packageComboBox only if no error are thrown
+            storage.addPackage(pack);
+            packageComboBox.getItems().add(pack);
+            resetPackageTab();
+            
+            //updates the amoutOfPackages counter
+            amountOfPackages.setText(Integer.toString(storage.getSize()));
+            openMessageWindow("Paketin luominen onnistui.", "");
         }
+        
+        //In case something went wrong an error message window will pop up:
+        catch(EmptyComboBoxException ex){
+            openMessageWindow("Valitse lähtö- ja saapumisautomaatti.", "");
+        }
+        catch(NumberFormatException | InputException ie){
+            openMessageWindow("Tarkista syötteet tai valitse" ,"valmis esine pudotusvalikosta.");
+        }
+        catch(InvalidLocationException ile){
+            openMessageWindow("Lähtö- ja saapumisautomaatit", "eivät saa olla samoja.");
+        }
+        catch(PackagingException pe){
+            openMessageWindow("Tavara ei mahdu pakettiin.", "Valitse toinen lähetysluokka");
+            }
     }
 
 
@@ -144,21 +263,21 @@ public class FXMLDocumentController implements Initializable {
 
     
     @FXML
-    private void addToMapAction(ActionEvent event) {
+    private void addMarkerAction(ActionEvent event) {
         //adds markers on the map using coordinates from SmartPost objects
-        
         
         if (automatonComboBox.valueProperty().getValue() != null){ //value is null if no objects have been selected from the combo box
             SmartPost smartpost = automatonComboBox.valueProperty().getValue();
             
-            //adds a marker:
+            //adding a marker:
             webWindow.getEngine().executeScript("document.goToLocation('"+ smartpost.getAddress() +", "+ smartpost.getCode()
                     + " " + smartpost.getCity() + "', '"+ smartpost.getName() +" "+smartpost.getAvailability() +  "', 'pink')");
             
-            
-            //drawn SmartPost object is added on the DrawnSmartPostList if it's not added before
-            if (smartpostlist.DrawnSmartPosts().contains(smartpost) == false){
-                smartpostlist.DrawnSmartPosts().add(smartpost);
+            //drawn SmartPost object is added on the start and destination
+            //ComboBoxes if it has not already been added before
+            if (startComboBox.getItems().contains(smartpost) == false){
+                startComboBox.getItems().add(smartpost);
+                destinationComboBox.getItems().add(smartpost);
             }
         }
     }
@@ -166,18 +285,21 @@ public class FXMLDocumentController implements Initializable {
     
     @FXML
     private void sendAction(ActionEvent event) {
-        //sends a package, draws a route on the map
+        //sends a package, draws a route on the map and updates the delivery history
+        
+        DateFormat date = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+        Calendar cal = Calendar.getInstance();
         
         if (packageComboBox.valueProperty().getValue() != null){ //value is null if no objects have been selected from the combo box
             double distance; //distance between start and destination 
             
-            //coordinates are added into an arraylist
+            //coordinates are added into an arraylist because the script command wants
+            //the coordinates in that form
             ArrayList <Double> al = new ArrayList();
             al.add(packageComboBox.valueProperty().getValue().startSmartPost.getLat());
             al.add(packageComboBox.valueProperty().getValue().startSmartPost.getLng());
             al.add(packageComboBox.valueProperty().getValue().destinationSmartPost.getLat());
             al.add(packageComboBox.valueProperty().getValue().destinationSmartPost.getLng());
-            
             
             //draws a route on the map: 
                 distance = (double)webWindow.getEngine().executeScript("document.createPath("+al+", 'red', " + packageComboBox.valueProperty().getValue().packageClass +")");
@@ -194,78 +316,112 @@ public class FXMLDocumentController implements Initializable {
                 if(packageComboBox.valueProperty().getValue().item.broken == true){
                     throw new BrokenItemException();
                 }
-                //adds 
-                packageListView.setText(packageListView.getText()+"Lähetettiin "+ packageComboBox.valueProperty().getValue().item.name + " " +
+                
+                //updates historyTextArea
+                historyTextArea.setText(historyTextArea.getText()+date.format(cal.getTime())+"   Lähetettiin "+ packageComboBox.valueProperty().getValue().item.name + " " +
                         packageComboBox.valueProperty().getValue().packageClass + ".luokassa, " + packageComboBox.valueProperty().getValue().startSmartPost.getName() 
-                        + " -> " + packageComboBox.valueProperty().getValue().destinationSmartPost.getName() +", etäisyys " + distance +"km. Paketti saapui perille ehjänä.");
+                        + " -> " + packageComboBox.valueProperty().getValue().destinationSmartPost.getName() +", etäisyys " + distance +"km. Paketti saapui perille ehjänä.\n");
             
             }
             //exceptions, in case something went wrong during delivery
             catch(DistanceException de){
-                openErrorWindow("Paketti jäi matkan varrelle!", "Liian pitkä välimatka 1.luokan paketeille");
+                openMessageWindow("Paketti jäi matkan varrelle!", "Liian pitkä välimatka 1.luokan paketeille");
                 webWindow.getEngine().executeScript("document.deletePaths()");
                 
-                packageListView.setText(packageListView.getText()+"Lähetettiin "+ packageComboBox.valueProperty().getValue().item.name + " " +
+                historyTextArea.setText(historyTextArea.getText()+date.format(cal.getTime())+"   Lähetettiin "+ packageComboBox.valueProperty().getValue().item.name + " " +
                         packageComboBox.valueProperty().getValue().packageClass + ".luokassa, " + packageComboBox.valueProperty().getValue().startSmartPost.getName() 
-                        + " -> " + packageComboBox.valueProperty().getValue().destinationSmartPost.getName() +" Paketti ei saapunut perille.");
+                        + " -> " + packageComboBox.valueProperty().getValue().destinationSmartPost.getName() +" Paketti ei saapunut perille.\n");
                 
             }
             catch(BrokenItemException bie){
-                openErrorWindow("Tavara hajosi kuljetuksen", "aikana!");
+                openMessageWindow("Tavara hajosi kuljetuksen", "aikana!");
                 
                 webWindow.getEngine().executeScript("document.deletePaths()");
-                packageListView.setText(packageListView.getText()+"Lähetettiin "+ packageComboBox.valueProperty().getValue().item.name + " " +
+                historyTextArea.setText(historyTextArea.getText()+date.format(cal.getTime())+"   Lähetettiin "+ packageComboBox.valueProperty().getValue().item.name + " " +
                         packageComboBox.valueProperty().getValue().packageClass + ".luokassa, " + packageComboBox.valueProperty().getValue().startSmartPost.getName()
-                        + " -> " + packageComboBox.valueProperty().getValue().destinationSmartPost.getName() +", etäisyys " + distance +"km. Tavara hajosi matkan aikana.");
+                        + " -> " + packageComboBox.valueProperty().getValue().destinationSmartPost.getName() +", etäisyys " + distance +"km. Tavara hajosi matkan aikana.\n");
                 
             }
-
-            //removes delivered package from Storage and then reloads the packages
-            //in packageBox
+            //amountOfPackages counter and historyLog.txt are updated
+            amountOfPackages.setText(Integer.toString(Integer.parseInt(amountOfPackages.getText())-1));
+            raw.saveHistory(historyTextArea.getText());
+            
+            //removes delivered package from Storage and then refreshes the packageBox
             storage.removePackage(packageComboBox.valueProperty().getValue());
             packageComboBox.getItems().clear();
             packageComboBox.setValue(null); //value is set to null to avoid NullPointerException
             for (int i = 0; i< storage.getSize();i++){
                 packageComboBox.getItems().add(storage.getPackage(i));
             }
-            
         }
     }
     
-    
-    @FXML
-    private void refreshAction(ActionEvent event) {
-        //refreshes pakcageComboBox
-        
-        packageComboBox.getItems().clear();
-        storage = Storage.getInstance();
-        for (int i = 0; i< storage.getSize();i++){
-            packageComboBox.getItems().add(storage.getPackage(i));
-        }
-    }
-
-    
-    private void openErrorWindow(String errorMessage, String errorMessage2){
-        //Opens an error window which can be used to tell user about incorrect usage
-        //of this program. Error message can be changed depending on the situation.
+    private void openMessageWindow(String message, String message2){
+        //Opens a message window which can be used to tell user about things like incorrect usage
+        //of this program. The message shown can be changed depending on the situation.
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("FXMLErrorWindow.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("FXMLMessageWindow.fxml"));
             Stage stage = new Stage();
             Scene scene = new Scene((Pane)loader.load());
             stage.setScene(scene);
             stage.setResizable(false);
             stage.setTitle("TIMO-järjestelmä");
             
-            //Passes error messages to ErrorWindowFXMLController
+            //Passes messages to FXMLMessageWindowController
             //http://stackoverflow.com/questions/14187963/passing-parameters-javafx-fxml
-            FXMLErrorWindowController controller = loader.<FXMLErrorWindowController>getController();
-            controller.setErrorMessage(errorMessage, errorMessage2);
+            FXMLMessageWindowController controller = loader.<FXMLMessageWindowController>getController();
+            controller.setMessage(message, message2);
             
-            scene.getStylesheets().add(FXMLErrorWindowController.class.getResource("SmartPost.css").toExternalForm());
+            scene.getStylesheets().add(FXMLMessageWindowController.class.getResource("SmartPost.css").toExternalForm());
             stage.show();
         } catch (IOException ex) {
-            System.out.println("Virheilmoitusikkunan avaaminen epäonnistui.");
+            System.out.println("Viesti-ikkunan avaaminen epäonnistui.");
         }
     }
 
+    @FXML
+    private void infoAction(ActionEvent event) {
+        //opens an info box which contains information about mailing classes
+        try {
+            Stage stage = new Stage();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("FXMLInfoWindow.fxml"));
+            
+            Scene scene = new Scene((Parent)loader.load());
+            stage.setScene(scene);
+            stage.setTitle("TIMO-järjestelmä");
+            
+            scene.getStylesheets().add(FXMLInfoWindowController.class.getResource("SmartPost.css").toExternalForm());
+            stage.show();
+        } catch (IOException ex) {
+            System.err.println("Paketti-infon avaaminen epäonnistui");
+        }
+    }
+
+    @FXML
+    private void cancelAction(ActionEvent event) {
+        //resets the package creation tab
+        resetPackageTab();
+    }
+    
+    private void resetPackageTab(){
+        //is used when either a new package is created or when
+        //cancelButton is pressed
+        itemComboBox.valueProperty().setValue(null);
+        startComboBox.valueProperty().setValue(null);
+        destinationComboBox.valueProperty().setValue(null);
+        firstClassBox.setSelected(true);
+        breakableBox.setSelected(false);
+        nameInputField.setText("");
+        lengthInputField.setText("");
+        widthInputField.setText("");
+        heightInputField.setText("");
+        massInputField.setText("");
+    }
+
+    @FXML
+    private void resetTextAreaAction(ActionEvent event) {
+        historyTextArea.setText("");
+        raw.saveHistory("");
+    }
+    
 }

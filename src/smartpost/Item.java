@@ -7,13 +7,13 @@ import java.util.Arrays;
  *
  * @author Joel Salminen 0401495
  */
-public class Item {
+public class Item implements java.io.Serializable{
     protected String name;
     protected double[] size = new double[3];
     protected double mass;
     
     //defines whether or not an item is broken. false by default
-     protected Boolean broken = false; 
+    protected Boolean broken = false; 
      
     //defines whether or not an item can break.
     protected Boolean degradable; 
@@ -43,28 +43,28 @@ public class Item {
 }
 
 //Different kind of items:
-class DVDBox extends Item{
+class DVDBox extends Item implements java.io.Serializable{
     DVDBox(){
         super(15,20,10,5,"DVD-boksi",false);
     }
 
 }
 
-class Stones extends Item{
+class Stones extends Item implements java.io.Serializable{
     Stones(){
-        super(100,100,150,80,"Kivikokoelma",false);
+        super(100,100,150,80,"Kiviä",false);
     }
 
 }
 
-class Cake extends Item{
+class Cake extends Item implements java.io.Serializable{
     Cake(){
         super(20,30,30,5,"Täytekakku",true);
     }
 
 }
 
-class GlassTableWare extends Item{
+class GlassTableWare extends Item implements java.io.Serializable{
 
     GlassTableWare (){
         super(15,20,25,8,"Lasiastiasto",true);

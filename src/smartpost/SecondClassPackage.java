@@ -5,7 +5,7 @@ package smartpost;
  *
  * @author Joel Salminen 0401495
  */
-public class SecondClassPackage extends Package{
+public class SecondClassPackage extends Package implements java.io.Serializable{
 
     public SecondClassPackage(SmartPost sp1, SmartPost sp2, Item it) throws PackagingException{
 
@@ -22,7 +22,6 @@ public class SecondClassPackage extends Package{
         if (item.size[0]>size[0] | item.size[1]>size[1] | item.size[2]>size[2]| it.mass>massLimit){
             throw new PackagingException();
         }
-        
     }
 }
 

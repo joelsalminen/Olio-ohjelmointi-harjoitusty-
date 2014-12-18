@@ -10,28 +10,27 @@ import java.util.ArrayList;
 public class SmartPostList {
     //Stores of SmartPost objects
     
-    //List SmartPost objects that can be drawn on the map:
     private ArrayList<SmartPost> smartPosts = new ArrayList();
-    
-    //List of SmartPost objects that have already been drawn on the map:
-    private ArrayList<SmartPost> drawnSmartPosts = new ArrayList();
     
     static private SmartPostList spl = null;
     private SmartPostList(){}
     
-    static SmartPostList getInstance(){
+    static public SmartPostList getInstance(){
         //Singleton pattern
         if (spl == null)
             spl = new SmartPostList();
         return spl;
     }
-    
-    public ArrayList<SmartPost> SmartPosts (){
-        return smartPosts;
+
+    public int getSize(){
+        return smartPosts.size();
+    }
+    public SmartPost getSmartPost(int i){
+        return smartPosts.get(i);
     }
     
-    public ArrayList<SmartPost> DrawnSmartPosts(){
-        return drawnSmartPosts;
+    public void addSmartPost(SmartPost sp){
+        smartPosts.add(sp);
     }
     
 }

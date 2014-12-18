@@ -4,7 +4,7 @@ package smartpost;
 /**
  * @author Joel Salminen 0401495
  */
-public abstract class Package{
+public abstract class Package implements java.io.Serializable{
     //abstract class. SmartPost objects, mailing class, size, and an item
     protected Item item;
     protected SmartPost startSmartPost;
@@ -13,11 +13,11 @@ public abstract class Package{
     protected double massLimit;
     protected double size[] = new double[3];
     
-    public Package(){
-    }
+    public Package(){}
     
     @Override
     public String toString(){
+        //changes the name of Package objects when displayed in a ComboBox
         return(item.toString() + ", " + packageClass +".luokka" );
     }
     
@@ -28,5 +28,6 @@ public abstract class Package{
         }
 
     }
+    
 }
 

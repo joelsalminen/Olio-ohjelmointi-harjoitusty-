@@ -7,14 +7,15 @@ import java.util.ArrayList;
  * @author Joel Salminen 0401495
  */
 
-public class Storage {
+public class Storage implements java.io.Serializable{
     //This class is used to keep track of Package objects
+    
     private ArrayList<Package> packages = new ArrayList();
     static private Storage storage = null;
     private Storage(){
     }
     
-    static Storage getInstance(){
+    static public Storage getInstance(){
         //Sigleton pattern
         if (storage == null)
             storage = new Storage();
