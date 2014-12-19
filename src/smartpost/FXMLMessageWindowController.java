@@ -24,7 +24,7 @@ public class FXMLMessageWindowController implements Initializable {
     @FXML
     private Label messageText2;
     
-    void setMessage(String message1, String message2){
+    public void setMessage(String message1, String message2){
         //receives custom message from other objects
         
         messageText.setText(message1);

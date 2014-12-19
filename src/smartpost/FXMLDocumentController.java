@@ -1,7 +1,6 @@
 package smartpost;
 
 
-import java.awt.Insets;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -13,8 +12,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -102,7 +99,6 @@ public class FXMLDocumentController implements Initializable {
     private Storage storage = Storage.getInstance();
     private ReadAndWrite raw = new ReadAndWrite();
 
-
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         
@@ -174,12 +170,14 @@ public class FXMLDocumentController implements Initializable {
     private void addMarkerAction(ActionEvent event) {
         //adds markers on the map using coordinates from SmartPost objects
         
-        if (automatonComboBox.valueProperty().getValue() != null){ //value is null if no objects have been selected from the combo box
+        //value is null if no objects have been selected from the combo box
+        if (automatonComboBox.valueProperty().getValue() != null){ 
             SmartPost smartpost = automatonComboBox.valueProperty().getValue();
             
             //adding a marker:
-            webWindow.getEngine().executeScript("document.goToLocation('"+ smartpost.getAddress() +", "+ smartpost.getCode()
-                    + " " + smartpost.getCity() + "', '"+ smartpost.getName() +" "+smartpost.getAvailability() +  "', 'pink')");
+            webWindow.getEngine().executeScript("document.goToLocation('"+ smartpost.getAddress() +", "
+                    + smartpost.getCode()+ " " + smartpost.getCity() + "', '"+ smartpost.getName() +" "
+                    +smartpost.getAvailability() +  "', 'pink')");
             //drawn SmartPost object is added on the start and destination
             //ComboBoxes if it has not already been added before
             if (startComboBox.getItems().contains(smartpost) == false){
@@ -206,33 +204,36 @@ public class FXMLDocumentController implements Initializable {
             //coordinates are added into an arraylist because the script command wants
             //the coordinates in that form
             ArrayList <Double> al = new ArrayList();
-            al.add(packageComboBox.valueProperty().getValue().startSmartPost.getLat());
-            al.add(packageComboBox.valueProperty().getValue().startSmartPost.getLng());
-            al.add(packageComboBox.valueProperty().getValue().destinationSmartPost.getLat());
-            al.add(packageComboBox.valueProperty().getValue().destinationSmartPost.getLng());
+            al.add(packageComboBox.valueProperty().getValue().getStartSmartPost().getLat());
+            al.add(packageComboBox.valueProperty().getValue().getStartSmartPost().getLng());
+            al.add(packageComboBox.valueProperty().getValue().getDestinationSmartPost().getLat());
+            al.add(packageComboBox.valueProperty().getValue().getDestinationSmartPost().getLng());
             
             //draws a route on the map: 
                 distance = (double)webWindow.getEngine().executeScript("document.createPath("+al+", 'red', " 
-                        + packageComboBox.valueProperty().getValue().packageClass +")");
+                        + packageComboBox.valueProperty().getValue().getPackageClass() +")");
                 
             try {
                 
                 //checks if the distance between start and finish is longer than 150km
                 //when delivering first class packages
-                if (packageComboBox.valueProperty().getValue().packageClass == 1 & distance >150){
+                if (packageComboBox.valueProperty().getValue().getPackageClass() == 1 & distance >150){
                     throw new DistanceException();
                 }
             
                 //tests if items were broken during delivery:
                 packageComboBox.valueProperty().getValue().breakTest();
-                if(packageComboBox.valueProperty().getValue().item.broken == true){
+                if(packageComboBox.valueProperty().getValue().getItem().broken == true){
                     throw new BrokenItemException();
                 }
                 
                 //updates historyTextArea
-                historyTextArea.setText(historyTextArea.getText()+date.format(cal.getTime())+"   Lähetettiin "+ packageComboBox.valueProperty().getValue().item.name + " " +
-                        packageComboBox.valueProperty().getValue().packageClass + ".luokassa, " + packageComboBox.valueProperty().getValue().startSmartPost.getName() 
-                        + " -> " + packageComboBox.valueProperty().getValue().destinationSmartPost.getName() +", etäisyys " + distance +"km. Paketti saapui perille ehjänä.\n");
+                historyTextArea.setText(historyTextArea.getText()+date.format(cal.getTime())+"   Lähetettiin ");
+                historyTextArea.setText(historyTextArea.getText()+packageComboBox.valueProperty().getValue().getItem().getName());
+                historyTextArea.setText(historyTextArea.getText()+ " " +packageComboBox.valueProperty().getValue().getPackageClass());
+                historyTextArea.setText(historyTextArea.getText()+ ".luokassa, " + packageComboBox.valueProperty().getValue().startSmartPost.getName());
+                historyTextArea.setText(historyTextArea.getText()+" -> " + packageComboBox.valueProperty().getValue().getDestinationSmartPost().getName());
+                historyTextArea.setText(historyTextArea.getText()+", etäisyys " + distance +"km. Paketti saapui perille ehjänä.\n");
             
             }
             //exceptions, in case something went wrong during delivery
@@ -240,18 +241,24 @@ public class FXMLDocumentController implements Initializable {
                 openMessageWindow("Paketti jäi matkan varrelle!", "Liian pitkä välimatka 1.luokan paketeille");
                 webWindow.getEngine().executeScript("document.deletePaths()");
                 
-                historyTextArea.setText(historyTextArea.getText()+date.format(cal.getTime())+"   Lähetettiin "+ packageComboBox.valueProperty().getValue().item.name + " " +
-                        packageComboBox.valueProperty().getValue().packageClass + ".luokassa, " + packageComboBox.valueProperty().getValue().startSmartPost.getName() 
-                        + " -> " + packageComboBox.valueProperty().getValue().destinationSmartPost.getName() +" Paketti ei saapunut perille.\n");
+                historyTextArea.setText(historyTextArea.getText()+date.format(cal.getTime())+"   Lähetettiin ");
+                historyTextArea.setText(historyTextArea.getText()+packageComboBox.valueProperty().getValue().getItem().getName());
+                historyTextArea.setText(historyTextArea.getText()+ " " +packageComboBox.valueProperty().getValue().getPackageClass());
+                historyTextArea.setText(historyTextArea.getText()+ ".luokassa, " + packageComboBox.valueProperty().getValue().getStartSmartPost().getName());
+                historyTextArea.setText(historyTextArea.getText()+" -> " + packageComboBox.valueProperty().getValue().getDestinationSmartPost().getName());
+                historyTextArea.setText(historyTextArea.getText()+" Paketti ei saapunut perille.\n");
                 
             }
             catch(BrokenItemException bie){
                 openMessageWindow("Tavara hajosi kuljetuksen", "aikana!");
                 
                 webWindow.getEngine().executeScript("document.deletePaths()");
-                historyTextArea.setText(historyTextArea.getText()+date.format(cal.getTime())+"   Lähetettiin "+ packageComboBox.valueProperty().getValue().item.name + " " +
-                        packageComboBox.valueProperty().getValue().packageClass + ".luokassa, " + packageComboBox.valueProperty().getValue().startSmartPost.getName()
-                        + " -> " + packageComboBox.valueProperty().getValue().destinationSmartPost.getName() +", etäisyys " + distance +"km. Tavara hajosi matkan aikana.\n");
+                historyTextArea.setText(historyTextArea.getText()+date.format(cal.getTime())+"   Lähetettiin ");
+                historyTextArea.setText(historyTextArea.getText()+packageComboBox.valueProperty().getValue().getItem().getName());
+                historyTextArea.setText(historyTextArea.getText()+ " " +packageComboBox.valueProperty().getValue().getPackageClass());
+                historyTextArea.setText(historyTextArea.getText()+ ".luokassa, " + packageComboBox.valueProperty().getValue().getStartSmartPost().getName());
+                historyTextArea.setText(historyTextArea.getText()+" -> " + packageComboBox.valueProperty().getValue().getDestinationSmartPost().getName());
+                historyTextArea.setText(historyTextArea.getText()+", etäisyys " + distance +"km. Tavara hajosi matkan aikana.\n");
                 
             }
             //amountOfPackages counter and historyLog.txt are updated
@@ -460,16 +467,18 @@ public class FXMLDocumentController implements Initializable {
             for (int i = 0; i<storage.getSize();i++){
                 packageComboBox.getItems().add(storage.getPackage(i));
                 
-                startSmartPost = storage.getPackage(i).startSmartPost;
-                destinationSmartPost = storage.getPackage(i).destinationSmartPost;
+                startSmartPost = storage.getPackage(i).getStartSmartPost();
+                destinationSmartPost = storage.getPackage(i).getDestinationSmartPost();
                 
-                webWindow.getEngine().executeScript("document.goToLocation('"+ startSmartPost.getAddress() 
-                        +", "+ startSmartPost.getCode()+ " " + startSmartPost.getCity() + "', '"
-                        + startSmartPost.getName() +" "+startSmartPost.getAvailability() +  "', 'pink')");
+                webWindow.getEngine().executeScript("document.goToLocation('"
+                        + startSmartPost.getAddress() +", "+ startSmartPost.getCode()+
+                        " " + startSmartPost.getCity() + "', '"+ startSmartPost.getName() +
+                        " "+startSmartPost.getAvailability() +  "', 'pink')");
             
-                webWindow.getEngine().executeScript("document.goToLocation('"+ destinationSmartPost.getAddress()
-                        +", "+ destinationSmartPost.getCode()+ " " + destinationSmartPost.getCity() + "', '"
-                        + destinationSmartPost.getName() +" "+destinationSmartPost.getAvailability() +  "', 'pink')");
+                webWindow.getEngine().executeScript("document.goToLocation('"
+                        + destinationSmartPost.getAddress()+", "+ destinationSmartPost.getCode()
+                        +" " + destinationSmartPost.getCity() + "', '"+ destinationSmartPost.getName() 
+                        +" "+destinationSmartPost.getAvailability()+  "', 'pink')");
                 
         }
             raw.clearStorageFile();
@@ -477,13 +486,13 @@ public class FXMLDocumentController implements Initializable {
             
             //updates the combo boxes and SmartPostList:
             for (int i=0;i<storage.getSize();i++){
-                if(startComboBox.getItems().contains(storage.getPackage(i).startSmartPost) == false){
-                    startComboBox.getItems().add(storage.getPackage(i).startSmartPost);
-                    destinationComboBox.getItems().add(storage.getPackage(i).startSmartPost);
+                if(startComboBox.getItems().contains(storage.getPackage(i).getStartSmartPost()) == false){
+                    startComboBox.getItems().add(storage.getPackage(i).getStartSmartPost());
+                    destinationComboBox.getItems().add(storage.getPackage(i).getStartSmartPost());
                 }
-                if(startComboBox.getItems().contains(storage.getPackage(i).destinationSmartPost) == false){
-                    startComboBox.getItems().add(storage.getPackage(i).destinationSmartPost);
-                    destinationComboBox.getItems().add(storage.getPackage(i).destinationSmartPost);
+                if(startComboBox.getItems().contains(storage.getPackage(i).getDestinationSmartPost()) == false){
+                    startComboBox.getItems().add(storage.getPackage(i).getDestinationSmartPost());
+                    destinationComboBox.getItems().add(storage.getPackage(i).getDestinationSmartPost());
                 }
             }
             

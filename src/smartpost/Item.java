@@ -8,9 +8,9 @@ import java.util.Arrays;
  * @author Joel Salminen 0401495
  */
 public class Item implements java.io.Serializable{
-    protected String name;
-    protected double[] size = new double[3];
-    protected double mass;
+    private String name;
+    private float[] size = new float[3];
+    private float mass;
     
     //defines whether or not an item is broken. false by default
     protected Boolean broken = false; 
@@ -39,7 +39,18 @@ public class Item implements java.io.Serializable{
     public String toString(){
         return(name);
     }
-
+    
+    public String getName(){
+        return name;
+    }
+    
+    public float[] getSize(){
+        return size;
+    }
+    
+    public float getMass(){
+        return mass;
+    }
 }
 
 //Different kind of items:

@@ -19,7 +19,7 @@ public class FirstClassPackage extends Package implements java.io.Serializable{
         massLimit = 50;
         
         //checks if an item can fit into a package. Throws PackagingException if it's too small or too heavy
-        if (it.size[0]>size[0] | it.size[1]>size[1] | it.size[2]>size[2]| it.mass>massLimit){
+        if (it.getSize()[0]>size[0] | it.getSize()[1]>size[1] | it.getSize()[2]>size[2]| it.getMass()>massLimit){
             throw new PackagingException();
             
         }

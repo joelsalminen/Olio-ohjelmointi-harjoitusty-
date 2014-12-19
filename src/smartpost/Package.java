@@ -29,5 +29,21 @@ public abstract class Package implements java.io.Serializable{
 
     }
     
+    public SmartPost getStartSmartPost(){
+        return startSmartPost;
+    }
+    
+    public SmartPost getDestinationSmartPost(){
+        return destinationSmartPost;
+    }
+    
+    public int getPackageClass(){
+        return packageClass;
+    }
+    
+    public Item getItem(){
+        return item;
+    }
+    
 }
 

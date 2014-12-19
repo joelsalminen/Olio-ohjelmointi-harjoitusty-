@@ -19,7 +19,7 @@ public class SecondClassPackage extends Package implements java.io.Serializable{
         massLimit = 30;
         
         //checks if an item can fit into a package. Throws PackagingException if it's too small or too heavy
-        if (item.size[0]>size[0] | item.size[1]>size[1] | item.size[2]>size[2]| it.mass>massLimit){
+        if (item.getSize()[0]>size[0] | item.getSize()[1]>size[1] | item.getSize()[2]>size[2]| it.getMass()>massLimit){
             throw new PackagingException();
         }
     }
