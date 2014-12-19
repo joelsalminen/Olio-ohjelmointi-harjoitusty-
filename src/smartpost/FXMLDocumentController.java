@@ -496,8 +496,6 @@ public class FXMLDocumentController implements Initializable {
                 }
             }
             
-            
-
     }   catch (IOException | ClassNotFoundException ex) {
             openMessageWindow("Varaston lataaminen epäonnistui!","");
         }
